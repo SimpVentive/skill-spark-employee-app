@@ -11,7 +11,8 @@ import {
   Play,
   FileText,
   Download,
-  Bookmark
+  Bookmark,
+  Calendar
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -28,6 +29,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
     { icon: Search, label: "Course Catalog", href: "/catalog" },
     { icon: Play, label: "Learning Paths", href: "/paths" },
     { icon: FileText, label: "Assessments", href: "/assessments" },
+    { icon: Calendar, label: "Calendar", href: "/calendar" },
     { icon: Download, label: "Offline Content", href: "/offline" },
     { icon: Bookmark, label: "Bookmarks", href: "/bookmarks" },
     { icon: Trophy, label: "Achievements", href: "/achievements" },

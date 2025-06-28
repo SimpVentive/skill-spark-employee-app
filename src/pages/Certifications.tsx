@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -115,9 +114,9 @@ const Certifications = () => {
 
   const getLevelColor = (level: string) => {
     switch (level) {
-      case 'Beginner': return 'bg-green-100 text-green-800';
-      case 'Intermediate': return 'bg-blue-100 text-blue-800';
-      case 'Advanced': return 'bg-purple-100 text-purple-800';
+      case 'Beginner': return 'bg-corporate-green text-corporate-green';
+      case 'Intermediate': return 'bg-corporate-blue text-corporate-blue';
+      case 'Advanced': return 'bg-corporate-orange text-corporate-orange';
       case 'Expert': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -125,8 +124,8 @@ const Certifications = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Active': return 'bg-green-100 text-green-800';
-      case 'Expiring Soon': return 'bg-yellow-100 text-yellow-800';
+      case 'Active': return 'bg-corporate-green text-corporate-green';
+      case 'Expiring Soon': return 'bg-corporate-orange text-corporate-orange';
       case 'Expired': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
@@ -140,38 +139,38 @@ const Certifications = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
+        <Card className="border-corporate-blue bg-corporate-blue">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Earned Certificates</CardTitle>
-            <Award className="h-4 w-4 text-yellow-600" />
+            <CardTitle className="text-sm font-medium text-corporate-blue">Earned Certificates</CardTitle>
+            <Award className="h-4 w-4 text-corporate-blue" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{earnedCertificates.length}</div>
-            <p className="text-xs text-muted-foreground">Professional certifications</p>
+            <div className="text-2xl font-bold text-corporate-blue">{earnedCertificates.length}</div>
+            <p className="text-xs text-corporate-blue/70">Professional certifications</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-corporate-orange bg-corporate-orange">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-            <Clock className="h-4 w-4 text-blue-600" />
+            <CardTitle className="text-sm font-medium text-corporate-orange">In Progress</CardTitle>
+            <Clock className="h-4 w-4 text-corporate-orange" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{inProgress.length}</div>
-            <p className="text-xs text-muted-foreground">Currently pursuing</p>
+            <div className="text-2xl font-bold text-corporate-orange">{inProgress.length}</div>
+            <p className="text-xs text-corporate-orange/70">Currently pursuing</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-corporate-green bg-corporate-green">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Score</CardTitle>
-            <Trophy className="h-4 w-4 text-green-600" />
+            <CardTitle className="text-sm font-medium text-corporate-green">Average Score</CardTitle>
+            <Trophy className="h-4 w-4 text-corporate-green" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-corporate-green">
               {Math.round(earnedCertificates.reduce((acc, cert) => acc + cert.score, 0) / earnedCertificates.length)}%
             </div>
-            <p className="text-xs text-muted-foreground">Certification average</p>
+            <p className="text-xs text-corporate-green/70">Certification average</p>
           </CardContent>
         </Card>
       </div>
@@ -328,9 +327,9 @@ const Certifications = () => {
                     <Progress value={cert.progress} className="h-2" />
                   </div>
 
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <div className="text-sm font-medium text-blue-900">Next Milestone</div>
-                    <div className="text-sm text-blue-700">{cert.nextMilestone}</div>
+                  <div className="p-3 bg-corporate-blue rounded-lg">
+                    <div className="text-sm font-medium text-corporate-blue">Next Milestone</div>
+                    <div className="text-sm text-corporate-blue/80">{cert.nextMilestone}</div>
                   </div>
 
                   <Button className="w-full">Continue Learning</Button>

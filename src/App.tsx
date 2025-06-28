@@ -12,6 +12,10 @@ import LearningPaths from "./pages/LearningPaths";
 import Assessments from "./pages/Assessments";
 import OfflineContent from "./pages/OfflineContent";
 import Bookmarks from "./pages/Bookmarks";
+import Achievements from "./pages/Achievements";
+import SocialLearning from "./pages/SocialLearning";
+import Analytics from "./pages/Analytics";
+import Certifications from "./pages/Certifications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -31,10 +35,10 @@ const App = () => (
             <Route path="/offline" element={<OfflineContent />} />
             <Route path="/bookmarks" element={<Bookmarks />} />
             <Route path="/calendar" element={<Calendar />} />
-            <Route path="/achievements" element={<div className="text-center py-8"><h2 className="text-2xl font-bold">Achievements</h2><p className="text-muted-foreground">Coming soon...</p></div>} />
-            <Route path="/social" element={<div className="text-center py-8"><h2 className="text-2xl font-bold">Social Learning</h2><p className="text-muted-foreground">Coming soon...</p></div>} />
-            <Route path="/analytics" element={<div className="text-center py-8"><h2 className="text-2xl font-bold">Analytics</h2><p className="text-muted-foreground">Coming soon...</p></div>} />
-            <Route path="/certifications" element={<div className="text-center py-8"><h2 className="text-2xl font-bold">Certifications</h2><p className="text-muted-foreground">Coming soon...</p></div>} />
+            <Route path="/achievements" element={<Achievements />} />
+            <Route path="/social" element={<SocialLearning />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/certifications" element={<Certifications />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

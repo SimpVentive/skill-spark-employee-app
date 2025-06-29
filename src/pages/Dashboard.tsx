@@ -13,8 +13,11 @@ import {
   Award,
   Users
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
   const stats = [
     { icon: BookOpen, label: "Courses Enrolled", value: "12", color: "text-blue-600" },
     { icon: Trophy, label: "Achievements", value: "24", color: "text-yellow-600" },
@@ -28,12 +31,21 @@ const Dashboard = () => {
     { id: 3, title: "Project Management Basics", progress: 90, type: "Management", lastAccessed: "3 days ago" },
   ];
 
+  const currentPrograms = [
+    { id: 1, title: "Advanced Leadership Development", progress: 30, type: "TNA Based", nextSession: "Tomorrow 10:00 AM" },
+    { id: 2, title: "Compliance and Ethics Training", progress: 100, type: "Mandatory", nextSession: "Completed" },
+  ];
+
   const achievements = [
     { id: 1, title: "First Course Completed", icon: "🎯", earned: true },
     { id: 2, title: "Week Streak", icon: "🔥", earned: true },
     { id: 3, title: "Social Learner", icon: "👥", earned: false },
     { id: 4, title: "Assessment Master", icon: "📝", earned: true },
   ];
+
+  const handleContinueLearning = () => {
+    navigate('/catalog');
+  };
 
   return (
     <div className="space-y-6">
@@ -69,25 +81,53 @@ const Dashboard = () => {
             <CardDescription>Pick up where you left off</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {recentCourses.map((course) => (
-              <div key={course.id} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium">{course.title}</h4>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Badge variant="outline">{course.type}</Badge>
-                      <span>•</span>
-                      <span>{course.lastAccessed}</span>
+            {/* Current E-Learning Courses */}
+            <div className="space-y-3">
+              <h4 className="font-medium text-sm text-muted-foreground">E-Learning Courses</h4>
+              {recentCourses.map((course) => (
+                <div key={course.id} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-medium">{course.title}</h4>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Badge variant="outline">{course.type}</Badge>
+                        <span>•</span>
+                        <span>{course.lastAccessed}</span>
+                      </div>
                     </div>
                   </div>
+                  <Progress value={course.progress} className="h-2" />
+                  <div className="text-right text-sm text-muted-foreground">
+                    {course.progress}% complete
+                  </div>
                 </div>
-                <Progress value={course.progress} className="h-2" />
-                <div className="text-right text-sm text-muted-foreground">
-                  {course.progress}% complete
+              ))}
+            </div>
+
+            {/* Current Training Programs */}
+            <div className="space-y-3 pt-4 border-t">
+              <h4 className="font-medium text-sm text-muted-foreground">Training Programs</h4>
+              {currentPrograms.map((program) => (
+                <div key={program.id} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-medium">{program.title}</h4>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Badge variant="outline">{program.type}</Badge>
+                        <span>•</span>
+                        <span>{program.nextSession}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <Progress value={program.progress} className="h-2" />
+                  <div className="text-right text-sm text-muted-foreground">
+                    {program.progress}% complete
+                  </div>
                 </div>
-              </div>
-            ))}
-            <Button className="w-full mt-4">
+              ))}
+            </div>
+
+            <Button className="w-full mt-4" onClick={handleContinueLearning}>
               <Play className="h-4 w-4 mr-2" />
               Continue Learning
             </Button>

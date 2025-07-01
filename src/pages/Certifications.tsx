@@ -1,116 +1,95 @@
+
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Award, Calendar, CheckCircle, Clock, Download, ExternalLink, Star, Trophy } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Certifications = () => {
-  const earnedCertificates = [
-    {
-      id: 1,
-      title: "React Developer Certification",
-      issuer: "SkillSpark Academy",
-      earnedDate: "2024-05-15",
-      expiryDate: "2026-05-15",
-      credentialId: "RSK-2024-001234",
-      skills: ["React", "JavaScript", "Frontend Development"],
-      score: 95,
-      status: "Active"
-    },
-    {
-      id: 2,
-      title: "Project Management Professional",
-      issuer: "PM Institute",
-      earnedDate: "2024-03-22",
-      expiryDate: "2027-03-22",
-      credentialId: "PMP-2024-005678",
-      skills: ["Project Management", "Leadership", "Agile"],
-      score: 88,
-      status: "Active"
-    },
-    {
-      id: 3,
-      title: "Digital Marketing Specialist",
-      issuer: "Marketing Academy",
-      earnedDate: "2024-01-10",
-      expiryDate: "2025-01-10",
-      credentialId: "DMS-2024-009876",
-      skills: ["SEO", "Social Media", "Analytics"],
-      score: 92,
-      status: "Expiring Soon"
+  const { data: availableCertifications = [], isLoading: loadingAvailable } = useQuery({
+    queryKey: ['available-certifications'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('certifications')
+        .select('*');
+      
+      if (error) throw error;
+      return data || [];
     }
-  ];
+  });
 
-  const availableCertifications = [
-    {
-      id: 1,
-      title: "Advanced JavaScript Certification",
-      issuer: "SkillSpark Academy",
-      duration: "40 hours",
-      level: "Advanced",
-      prerequisites: ["Basic JavaScript", "ES6+ Knowledge"],
-      skills: ["Advanced JavaScript", "Async Programming", "Design Patterns"],
-      price: 199,
-      rating: 4.8,
-      enrolled: 1234
-    },
-    {
-      id: 2,
-      title: "Cloud Architecture Certification",
-      issuer: "Cloud Institute",
-      duration: "60 hours",
-      level: "Expert",
-      prerequisites: ["Cloud Basics", "System Design"],
-      skills: ["AWS", "System Design", "Microservices"],
-      price: 299,
-      rating: 4.9,
-      enrolled: 856
-    },
-    {
-      id: 3,
-      title: "UX Design Professional",
-      issuer: "Design Academy",
-      duration: "35 hours",
-      level: "Intermediate",
-      prerequisites: ["Design Basics", "User Research"],
-      skills: ["User Research", "Prototyping", "Design Systems"],
-      price: 249,
-      rating: 4.7,
-      enrolled: 967
-    },
-    {
-      id: 4,
-      title: "Data Science Fundamentals",
-      issuer: "Data Institute",
-      duration: "50 hours",
-      level: "Beginner",
-      prerequisites: ["Basic Statistics", "Python Basics"],
-      skills: ["Python", "Statistics", "Machine Learning"],
-      price: 179,
-      rating: 4.6,
-      enrolled: 2145
+  const { data: earnedCertificates = [], isLoading: loadingEarned } = useQuery({
+    queryKey: ['earned-certificates'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('user_certifications')
+        .select(`
+          *,
+          certifications (*)
+        `);
+      
+      if (error) throw error;
+      return data || [];
     }
-  ];
+  });
 
-  const inProgress = [
-    {
-      id: 1,
-      title: "Advanced JavaScript Certification",
-      progress: 75,
-      estimatedCompletion: "2 weeks",
-      nextMilestone: "Final Assessment",
-      timeSpent: 30
-    },
-    {
-      id: 2,
-      title: "Cloud Architecture Certification",
-      progress: 45,
-      estimatedCompletion: "1 month",
-      nextMilestone: "Module 4: Security",
-      timeSpent: 27
+  const { data: inProgressAttempts = [], isLoading: loadingProgress } = useQuery({
+    queryKey: ['certification-attempts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('user_certification_attempts')
+        .select(`
+          *,
+          certifications (*)
+        `)
+        .eq('status', 'in_progress');
+      
+      if (error) throw error;
+      return data || [];
     }
-  ];
+  });
+
+  const transformEarnedCertificate = (cert: any) => ({
+    id: cert.id,
+    title: cert.certifications.title,
+    issuer: cert.certifications.issuer,
+    earnedDate: cert.earned_date,
+    expiryDate: cert.expiry_date,
+    credentialId: cert.credential_id,
+    skills: cert.certifications.skills_covered || [],
+    score: cert.score,
+    status: cert.status === 'active' ? 'Active' : 
+           (cert.expiry_date && new Date(cert.expiry_date) < new Date()) ? 'Expired' : 'Active'
+  });
+
+  const transformAvailableCertification = (cert: any) => ({
+    id: cert.id,
+    title: cert.title,
+    issuer: cert.issuer,
+    duration: `${cert.duration_hours || 0} hours`,
+    level: cert.level,
+    prerequisites: cert.prerequisites || [],
+    skills: cert.skills_covered || [],
+    price: cert.price || 0,
+    rating: 4.5, // This would need to be calculated from user ratings
+    enrolled: 0 // This would need to be calculated from attempts/enrollments
+  });
+
+  const transformInProgressAttempt = (attempt: any) => ({
+    id: attempt.id,
+    title: attempt.certifications.title,
+    progress: 50, // This would need to be calculated based on actual progress
+    estimatedCompletion: "2 weeks", // This would need to be calculated
+    nextMilestone: "Module Assessment", // This would come from the learning path
+    timeSpent: 15 // This would come from tracking data
+  });
+
+  const earnedCertificatesData = earnedCertificates.map(transformEarnedCertificate);
+  const availableCertificationsData = availableCertifications.map(transformAvailableCertification);
+  const inProgressData = inProgressAttempts.map(transformInProgressAttempt);
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -131,6 +110,10 @@ const Certifications = () => {
     }
   };
 
+  if (loadingAvailable || loadingEarned || loadingProgress) {
+    return <div className="flex justify-center p-8">Loading certifications...</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2">
@@ -145,7 +128,7 @@ const Certifications = () => {
             <Award className="h-4 w-4 text-corporate-blue" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-corporate-blue">{earnedCertificates.length}</div>
+            <div className="text-2xl font-bold text-corporate-blue">{earnedCertificatesData.length}</div>
             <p className="text-xs text-corporate-blue/70">Professional certifications</p>
           </CardContent>
         </Card>
@@ -156,7 +139,7 @@ const Certifications = () => {
             <Clock className="h-4 w-4 text-corporate-orange" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-corporate-orange">{inProgress.length}</div>
+            <div className="text-2xl font-bold text-corporate-orange">{inProgressData.length}</div>
             <p className="text-xs text-corporate-orange/70">Currently pursuing</p>
           </CardContent>
         </Card>
@@ -168,7 +151,9 @@ const Certifications = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-corporate-green">
-              {Math.round(earnedCertificates.reduce((acc, cert) => acc + cert.score, 0) / earnedCertificates.length)}%
+              {earnedCertificatesData.length > 0 
+                ? Math.round(earnedCertificatesData.reduce((acc, cert) => acc + (cert.score || 0), 0) / earnedCertificatesData.length)
+                : 0}%
             </div>
             <p className="text-xs text-corporate-green/70">Certification average</p>
           </CardContent>
@@ -177,14 +162,14 @@ const Certifications = () => {
 
       <Tabs defaultValue="earned" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="earned">Earned ({earnedCertificates.length})</TabsTrigger>
-          <TabsTrigger value="available">Available ({availableCertifications.length})</TabsTrigger>
-          <TabsTrigger value="progress">In Progress ({inProgress.length})</TabsTrigger>
+          <TabsTrigger value="earned">Earned ({earnedCertificatesData.length})</TabsTrigger>
+          <TabsTrigger value="available">Available ({availableCertificationsData.length})</TabsTrigger>
+          <TabsTrigger value="progress">In Progress ({inProgressData.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="earned" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {earnedCertificates.map((cert) => (
+            {earnedCertificatesData.map((cert) => (
               <Card key={cert.id} className="relative">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -243,12 +228,18 @@ const Certifications = () => {
                 </CardContent>
               </Card>
             ))}
+            
+            {earnedCertificatesData.length === 0 && (
+              <div className="col-span-2 text-center py-8">
+                <p className="text-muted-foreground">No earned certificates yet. Start by enrolling in available certifications!</p>
+              </div>
+            )}
           </div>
         </TabsContent>
 
         <TabsContent value="available" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {availableCertifications.map((cert) => (
+            {availableCertificationsData.map((cert) => (
               <Card key={cert.id} className="hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="space-y-2">
@@ -284,14 +275,16 @@ const Certifications = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <span className="font-medium text-sm">Prerequisites:</span>
-                    <ul className="text-xs text-muted-foreground mt-1">
-                      {cert.prerequisites.map((prereq, index) => (
-                        <li key={index}>• {prereq}</li>
-                      ))}
-                    </ul>
-                  </div>
+                  {cert.prerequisites.length > 0 && (
+                    <div>
+                      <span className="font-medium text-sm">Prerequisites:</span>
+                      <ul className="text-xs text-muted-foreground mt-1">
+                        {cert.prerequisites.map((prereq, index) => (
+                          <li key={index}>• {prereq}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
@@ -305,12 +298,18 @@ const Certifications = () => {
                 </CardContent>
               </Card>
             ))}
+            
+            {availableCertificationsData.length === 0 && (
+              <div className="col-span-2 text-center py-8">
+                <p className="text-muted-foreground">No certifications available at the moment.</p>
+              </div>
+            )}
           </div>
         </TabsContent>
 
         <TabsContent value="progress" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {inProgress.map((cert) => (
+            {inProgressData.map((cert) => (
               <Card key={cert.id}>
                 <CardHeader>
                   <CardTitle className="text-lg">{cert.title}</CardTitle>
@@ -336,6 +335,12 @@ const Certifications = () => {
                 </CardContent>
               </Card>
             ))}
+            
+            {inProgressData.length === 0 && (
+              <div className="col-span-2 text-center py-8">
+                <p className="text-muted-foreground">No certifications in progress. Start a certification from the Available tab!</p>
+              </div>
+            )}
           </div>
         </TabsContent>
       </Tabs>

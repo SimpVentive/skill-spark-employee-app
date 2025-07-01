@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,79 +16,73 @@ import {
   CheckCircle,
   Circle
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const LearningPaths = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const learningPaths = [
-    {
-      id: 1,
-      title: "GXP Compliance Certification",
-      description: "Complete certification program for Good Practice compliance",
-      progress: 75,
-      totalModules: 8,
-      completedModules: 6,
-      duration: "40 hours",
-      participants: 156,
-      category: "Compliance",
-      level: "Intermediate",
-      modules: [
-        { title: "Introduction to GXP", completed: true },
-        { title: "Good Manufacturing Practice", completed: true },
-        { title: "Good Clinical Practice", completed: true },
-        { title: "Good Laboratory Practice", completed: true },
-        { title: "Quality Management", completed: true },
-        { title: "Documentation Standards", completed: true },
-        { title: "Risk Assessment", completed: false },
-        { title: "Final Evaluation", completed: false }
-      ]
-    },
-    {
-      id: 2,
-      title: "Leadership Development Program",
-      description: "Comprehensive leadership skills development path",
-      progress: 30,
-      totalModules: 6,
-      completedModules: 2,
-      duration: "32 hours",
-      participants: 89,
-      category: "Leadership",
-      level: "Advanced",
-      modules: [
-        { title: "Leadership Fundamentals", completed: true },
-        { title: "Team Management", completed: true },
-        { title: "Strategic Thinking", completed: false },
-        { title: "Change Management", completed: false },
-        { title: "Communication Skills", completed: false },
-        { title: "Performance Management", completed: false }
-      ]
-    },
-    {
-      id: 3,
-      title: "Safety Training Pathway",
-      description: "Essential safety protocols and procedures training",
-      progress: 100,
-      totalModules: 5,
-      completedModules: 5,
-      duration: "24 hours",
-      participants: 203,
-      category: "Safety",
-      level: "Beginner",
-      modules: [
-        { title: "Workplace Safety Basics", completed: true },
-        { title: "Emergency Procedures", completed: true },
-        { title: "Personal Protective Equipment", completed: true },
-        { title: "Hazard Identification", completed: true },
-        { title: "Safety Reporting", completed: true }
-      ]
+  const { data: learningPaths = [], isLoading } = useQuery({
+    queryKey: ['learning-paths'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('learning_paths')
+        .select(`
+          *,
+          learning_path_modules (*),
+          user_learning_path_enrollments (
+            *,
+            user_module_progress (*)
+          )
+        `);
+      
+      if (error) throw error;
+      return data || [];
     }
-  ];
+  });
 
-  const filteredPaths = learningPaths.filter(path =>
+  const transformLearningPathData = (path: any) => {
+    const enrollment = path.user_learning_path_enrollments?.[0];
+    const modules = path.learning_path_modules || [];
+    const moduleProgress = enrollment?.user_module_progress || [];
+    
+    const completedModules = moduleProgress.filter((progress: any) => 
+      progress.status === 'completed'
+    ).length;
+    
+    const progress = modules.length > 0 ? (completedModules / modules.length) * 100 : 0;
+    
+    return {
+      id: path.id,
+      title: path.title,
+      description: path.description,
+      progress: Math.round(progress),
+      totalModules: modules.length,
+      completedModules,
+      duration: `${path.total_duration_hours || 0} hours`,
+      participants: 0, // This would need to be calculated from enrollments
+      category: path.category || 'General',
+      level: path.level,
+      modules: modules.map((module: any) => {
+        const moduleProgress = moduleProgress.find((p: any) => p.module_id === module.id);
+        return {
+          title: module.title,
+          completed: moduleProgress?.status === 'completed'
+        };
+      })
+    };
+  };
+
+  const transformedPaths = learningPaths.map(transformLearningPathData);
+  
+  const filteredPaths = transformedPaths.filter(path =>
     path.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     path.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     path.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (isLoading) {
+    return <div className="flex justify-center p-8">Loading learning paths...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -191,6 +186,12 @@ const LearningPaths = () => {
             </CardContent>
           </Card>
         ))}
+        
+        {filteredPaths.length === 0 && (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">No learning paths found matching your search.</p>
+          </div>
+        )}
       </div>
     </div>
   );

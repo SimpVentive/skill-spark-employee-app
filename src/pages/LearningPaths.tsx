@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,73 +15,57 @@ import {
   CheckCircle,
   Circle
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 
 const LearningPaths = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: learningPaths = [], isLoading } = useQuery({
-    queryKey: ['learning-paths'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('learning_paths')
-        .select(`
-          *,
-          learning_path_modules (*),
-          user_learning_path_enrollments (
-            *,
-            user_module_progress (*)
-          )
-        `);
-      
-      if (error) throw error;
-      return data || [];
+  // Mock data - will be replaced with Supabase queries once types are updated
+  const mockLearningPaths = [
+    {
+      id: "1",
+      title: "Frontend Development Mastery",
+      description: "Complete guide to modern frontend development with React, TypeScript, and modern tooling",
+      progress: 65,
+      totalModules: 12,
+      completedModules: 8,
+      duration: "40 hours",
+      participants: 1250,
+      category: "Development",
+      level: "Intermediate",
+      modules: [
+        { title: "React Fundamentals", completed: true },
+        { title: "TypeScript Basics", completed: true },
+        { title: "State Management", completed: true },
+        { title: "Testing Strategies", completed: false },
+        { title: "Performance Optimization", completed: false }
+      ]
+    },
+    {
+      id: "2",
+      title: "Data Science Foundations",
+      description: "Learn data analysis, visualization, and machine learning fundamentals",
+      progress: 30,
+      totalModules: 15,
+      completedModules: 4,
+      duration: "60 hours",
+      participants: 890,
+      category: "Data Science",
+      level: "Beginner",
+      modules: [
+        { title: "Python for Data Science", completed: true },
+        { title: "Data Visualization", completed: true },
+        { title: "Statistical Analysis", completed: false },
+        { title: "Machine Learning Intro", completed: false },
+        { title: "Model Evaluation", completed: false }
+      ]
     }
-  });
+  ];
 
-  const transformLearningPathData = (path: any) => {
-    const enrollment = path.user_learning_path_enrollments?.[0];
-    const modules = path.learning_path_modules || [];
-    const moduleProgress = enrollment?.user_module_progress || [];
-    
-    const completedModules = moduleProgress.filter((progress: any) => 
-      progress.status === 'completed'
-    ).length;
-    
-    const progress = modules.length > 0 ? (completedModules / modules.length) * 100 : 0;
-    
-    return {
-      id: path.id,
-      title: path.title,
-      description: path.description,
-      progress: Math.round(progress),
-      totalModules: modules.length,
-      completedModules,
-      duration: `${path.total_duration_hours || 0} hours`,
-      participants: 0, // This would need to be calculated from enrollments
-      category: path.category || 'General',
-      level: path.level,
-      modules: modules.map((module: any) => {
-        const moduleProgress = moduleProgress.find((p: any) => p.module_id === module.id);
-        return {
-          title: module.title,
-          completed: moduleProgress?.status === 'completed'
-        };
-      })
-    };
-  };
-
-  const transformedPaths = learningPaths.map(transformLearningPathData);
-  
-  const filteredPaths = transformedPaths.filter(path =>
+  const filteredPaths = mockLearningPaths.filter(path =>
     path.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     path.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
     path.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  if (isLoading) {
-    return <div className="flex justify-center p-8">Loading learning paths...</div>;
-  }
 
   return (
     <div className="space-y-6">

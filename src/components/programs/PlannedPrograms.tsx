@@ -1,77 +1,55 @@
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { supabase } from "@/integrations/supabase/client";
 import ProgramCard from "./ProgramCard";
 
 const PlannedPrograms = () => {
-  const tnaPrograms = [
-    {
-      id: 1,
-      title: "Advanced Leadership Development",
-      level: "Advanced",
-      theme: "Leadership",
-      outline: "Comprehensive leadership skills development for senior managers...",
-      dates: "2024-07-15 to 2024-07-19",
-      venue: "Corporate Training Center, Mumbai",
-      multipleBatches: true,
-      faculty: "Dr. Sarah Johnson, Leadership Expert",
-      preTest: "Available from 2024-07-01",
-      preRead: "Leadership handbook and case studies",
-      icon: "👑",
-      type: "tna"
-    },
-    {
-      id: 2,
-      title: "Digital Transformation Strategy",
-      level: "Intermediate",
-      theme: "Technology",
-      outline: "Learn to lead digital transformation initiatives in your organization...",
-      dates: "2024-08-05 to 2024-08-07",
-      venue: "Tech Hub, Bangalore",
-      multipleBatches: false,
-      faculty: "Prof. Michael Chen",
-      preTest: "Available from 2024-07-20",
-      preRead: "Digital strategy framework guide",
-      icon: "🚀",
-      type: "tna"
+  const { data: programs = [], isLoading } = useQuery({
+    queryKey: ['planned-programs'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('programs')
+        .select(`
+          *,
+          program_sessions (*)
+        `)
+        .in('program_type', ['tna', 'mandatory', 'self-directed']);
+      
+      if (error) throw error;
+      return data || [];
     }
-  ];
+  });
 
-  const mandatoryPrograms = [
-    {
-      id: 3,
-      title: "Compliance and Ethics Training",
-      level: "Basic",
-      theme: "Compliance",
-      outline: "Essential compliance training covering company policies and ethical practices...",
-      dates: "2024-07-22 to 2024-07-22",
-      venue: "Online Training Platform",
-      multipleBatches: true,
-      faculty: "Legal Team",
-      preTest: "Available from 2024-07-15",
-      preRead: "Company code of conduct",
-      icon: "⚖️",
-      type: "mandatory"
-    }
-  ];
+  if (isLoading) {
+    return <div className="flex justify-center p-8">Loading programs...</div>;
+  }
 
-  const selfDirectedPrograms = [
-    {
-      id: 4,
-      title: "Data Analytics Fundamentals",
-      level: "Beginner",
-      theme: "Analytics",
-      outline: "Introduction to data analytics tools and techniques for business insights...",
-      dates: "Self-paced (Complete by 2024-09-30)",
-      venue: "E-Learning Platform",
-      multipleBatches: false,
-      faculty: "Analytics Team",
-      preTest: "Available immediately",
-      preRead: "Statistics refresher materials",
-      icon: "📊",
-      type: "self-directed"
-    }
-  ];
+  const tnaPrograms = programs.filter(p => p.program_type === 'tna');
+  const mandatoryPrograms = programs.filter(p => p.program_type === 'mandatory');
+  const selfDirectedPrograms = programs.filter(p => p.program_type === 'self-directed');
+
+  const transformProgramData = (program: any) => {
+    const session = program.program_sessions?.[0];
+    return {
+      id: program.id,
+      title: program.title,
+      level: program.level,
+      theme: program.theme,
+      outline: program.outline,
+      dates: session 
+        ? `${session.start_date} to ${session.end_date}`
+        : 'Self-paced',
+      venue: program.venue,
+      multipleBatches: program.multiple_batches,
+      faculty: program.faculty,
+      preTest: program.pre_test_info,
+      preRead: program.pre_read_info,
+      icon: program.icon,
+      type: program.program_type
+    };
+  };
 
   return (
     <Tabs defaultValue="tna" className="w-full">
@@ -84,7 +62,7 @@ const PlannedPrograms = () => {
       <TabsContent value="tna" className="space-y-4 mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {tnaPrograms.map((program) => (
-            <ProgramCard key={program.id} program={program} />
+            <ProgramCard key={program.id} program={transformProgramData(program)} />
           ))}
         </div>
       </TabsContent>
@@ -92,7 +70,7 @@ const PlannedPrograms = () => {
       <TabsContent value="mandatory" className="space-y-4 mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {mandatoryPrograms.map((program) => (
-            <ProgramCard key={program.id} program={program} />
+            <ProgramCard key={program.id} program={transformProgramData(program)} />
           ))}
         </div>
       </TabsContent>
@@ -100,7 +78,7 @@ const PlannedPrograms = () => {
       <TabsContent value="self-directed" className="space-y-4 mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {selfDirectedPrograms.map((program) => (
-            <ProgramCard key={program.id} program={program} />
+            <ProgramCard key={program.id} program={transformProgramData(program)} />
           ))}
         </div>
       </TabsContent>

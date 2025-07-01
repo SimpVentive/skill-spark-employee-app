@@ -9,7 +9,327 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      assessments: {
+        Row: {
+          assessment_type: string
+          created_at: string | null
+          due_date: string | null
+          id: string
+          max_attempts: number | null
+          passing_score: number
+          program_id: string | null
+          time_limit_minutes: number | null
+          title: string
+        }
+        Insert: {
+          assessment_type: string
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          max_attempts?: number | null
+          passing_score: number
+          program_id?: string | null
+          time_limit_minutes?: number | null
+          title: string
+        }
+        Update: {
+          assessment_type?: string
+          created_at?: string | null
+          due_date?: string | null
+          id?: string
+          max_attempts?: number | null
+          passing_score?: number
+          program_id?: string | null
+          time_limit_minutes?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessments_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          department: string | null
+          email: string | null
+          full_name: string | null
+          id: string
+          manager_id: string | null
+          position: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department?: string | null
+          email?: string | null
+          full_name?: string | null
+          id: string
+          manager_id?: string | null
+          position?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department?: string | null
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          manager_id?: string | null
+          position?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      program_sessions: {
+        Row: {
+          created_at: string | null
+          current_participants: number | null
+          end_date: string
+          id: string
+          max_participants: number | null
+          program_id: string
+          start_date: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_participants?: number | null
+          end_date: string
+          id?: string
+          max_participants?: number | null
+          program_id: string
+          start_date: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_participants?: number | null
+          end_date?: string
+          id?: string
+          max_participants?: number | null
+          program_id?: string
+          start_date?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_sessions_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      programs: {
+        Row: {
+          created_at: string | null
+          faculty: string | null
+          icon: string | null
+          id: string
+          level: string
+          multiple_batches: boolean | null
+          outline: string
+          pre_read_info: string | null
+          pre_test_info: string | null
+          program_type: string
+          theme: string | null
+          title: string
+          updated_at: string | null
+          venue: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          faculty?: string | null
+          icon?: string | null
+          id?: string
+          level: string
+          multiple_batches?: boolean | null
+          outline: string
+          pre_read_info?: string | null
+          pre_test_info?: string | null
+          program_type: string
+          theme?: string | null
+          title: string
+          updated_at?: string | null
+          venue?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          faculty?: string | null
+          icon?: string | null
+          id?: string
+          level?: string
+          multiple_batches?: boolean | null
+          outline?: string
+          pre_read_info?: string | null
+          pre_test_info?: string | null
+          program_type?: string
+          theme?: string | null
+          title?: string
+          updated_at?: string | null
+          venue?: string | null
+        }
+        Relationships: []
+      }
+      user_assessment_attempts: {
+        Row: {
+          assessment_id: string
+          attempt_number: number
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          score: number | null
+          started_at: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          assessment_id: string
+          attempt_number: number
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          score?: number | null
+          started_at?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          assessment_id?: string
+          attempt_number?: number
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          score?: number | null
+          started_at?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_assessment_attempts_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_program_enrollments: {
+        Row: {
+          attendance_confirmed: boolean | null
+          completed_at: string | null
+          date_change_requested: boolean | null
+          enrolled_at: string | null
+          enrollment_type: string
+          id: string
+          program_id: string
+          requested_session_id: string | null
+          session_id: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          attendance_confirmed?: boolean | null
+          completed_at?: string | null
+          date_change_requested?: boolean | null
+          enrolled_at?: string | null
+          enrollment_type: string
+          id?: string
+          program_id: string
+          requested_session_id?: string | null
+          session_id?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          attendance_confirmed?: boolean | null
+          completed_at?: string | null
+          date_change_requested?: boolean | null
+          enrolled_at?: string | null
+          enrollment_type?: string
+          id?: string
+          program_id?: string
+          requested_session_id?: string | null
+          session_id?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_program_enrollments_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_program_enrollments_requested_session_id_fkey"
+            columns: ["requested_session_id"]
+            isOneToOne: false
+            referencedRelation: "program_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_program_enrollments_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "program_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_requests: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string | null
+          processed_at: string | null
+          program_id: string | null
+          request_type: string
+          requested_date: string | null
+          status: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          processed_at?: string | null
+          program_id?: string | null
+          request_type: string
+          requested_date?: string | null
+          status?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          processed_at?: string | null
+          program_id?: string | null
+          request_type?: string
+          requested_date?: string | null
+          status?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_requests_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

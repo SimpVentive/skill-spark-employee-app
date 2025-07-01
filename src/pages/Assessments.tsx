@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,69 +15,58 @@ import {
   Calendar,
   Target
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Assessments = () => {
-  const assessments = [
-    {
-      id: 1,
-      title: "GXP Compliance Final Test",
-      type: "E-Learning Test",
-      course: "GXP Compliance Certification",
-      status: "Completed",
-      score: 92,
-      passingScore: 80,
-      timeLimit: "60 minutes",
-      attempts: 1,
-      maxAttempts: 3,
-      dueDate: "2025-06-15",
-      completedDate: "2025-06-10"
-    },
-    {
-      id: 2,
-      title: "Leadership Assessment",
-      type: "Skills Evaluation",
-      course: "Leadership Development",
-      status: "In Progress",
-      score: null,
-      passingScore: 75,
-      timeLimit: "45 minutes",
-      attempts: 0,
-      maxAttempts: 2,
-      dueDate: "2025-06-20",
-      completedDate: null
-    },
-    {
-      id: 3,
-      title: "Safety Knowledge Check",
-      type: "Quiz",
-      course: "Safety Training Pathway",
-      status: "Pending",
-      score: null,
-      passingScore: 70,
-      timeLimit: "30 minutes",
-      attempts: 0,
-      maxAttempts: 3,
-      dueDate: "2025-06-25",
-      completedDate: null
-    },
-    {
-      id: 4,
-      title: "Project Management Practical",
-      type: "Practical Assessment",
-      course: "Project Management Basics",
-      status: "Failed",
-      score: 65,
-      passingScore: 70,
-      timeLimit: "90 minutes",
-      attempts: 2,
-      maxAttempts: 3,
-      dueDate: "2025-06-18",
-      completedDate: "2025-06-17"
+  const { data: assessments = [], isLoading } = useQuery({
+    queryKey: ['assessments'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('assessments')
+        .select(`
+          *,
+          programs (title),
+          user_assessment_attempts (
+            attempt_number,
+            score,
+            status,
+            completed_at
+          )
+        `);
+      
+      if (error) throw error;
+      return data || [];
     }
-  ];
+  });
 
-  const upcomingAssessments = assessments.filter(a => a.status === "Pending" || a.status === "In Progress");
-  const completedAssessments = assessments.filter(a => a.status === "Completed" || a.status === "Failed");
+  if (isLoading) {
+    return <div className="flex justify-center p-8">Loading assessments...</div>;
+  }
+
+  // Transform the data to match the existing component structure
+  const transformedAssessments = assessments.map(assessment => {
+    const latestAttempt = assessment.user_assessment_attempts?.[0];
+    
+    return {
+      id: assessment.id,
+      title: assessment.title,
+      type: assessment.assessment_type,
+      course: assessment.programs?.title || 'Unknown Course',
+      status: latestAttempt?.status === 'completed' ? 'Completed' : 
+              latestAttempt?.status === 'failed' ? 'Failed' :
+              latestAttempt?.status === 'in_progress' ? 'In Progress' : 'Pending',
+      score: latestAttempt?.score || null,
+      passingScore: assessment.passing_score,
+      timeLimit: assessment.time_limit_minutes ? `${assessment.time_limit_minutes} minutes` : 'No limit',
+      attempts: assessment.user_assessment_attempts?.length || 0,
+      maxAttempts: assessment.max_attempts || 3,
+      dueDate: assessment.due_date || 'No due date',
+      completedDate: latestAttempt?.completed_at || null
+    };
+  });
+
+  const upcomingAssessments = transformedAssessments.filter(a => a.status === "Pending" || a.status === "In Progress");
+  const completedAssessments = transformedAssessments.filter(a => a.status === "Completed" || a.status === "Failed");
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -105,6 +94,14 @@ const Assessments = () => {
     }
   };
 
+  // Calculate summary stats
+  const totalAssessments = transformedAssessments.length;
+  const completedCount = transformedAssessments.filter(a => a.status === "Completed").length;
+  const pendingCount = transformedAssessments.filter(a => a.status === "Pending" || a.status === "In Progress").length;
+  const averageScore = completedAssessments.length > 0 
+    ? Math.round(completedAssessments.reduce((sum, a) => sum + (a.score || 0), 0) / completedAssessments.length)
+    : 0;
+
   return (
     <div className="space-y-6">
       <div>
@@ -118,7 +115,7 @@ const Assessments = () => {
           <CardContent className="flex items-center p-6">
             <Target className="h-8 w-8 text-blue-600" />
             <div className="ml-4">
-              <p className="text-2xl font-bold">4</p>
+              <p className="text-2xl font-bold">{totalAssessments}</p>
               <p className="text-sm text-muted-foreground">Total Assessments</p>
             </div>
           </CardContent>
@@ -128,7 +125,7 @@ const Assessments = () => {
           <CardContent className="flex items-center p-6">
             <CheckCircle className="h-8 w-8 text-green-600" />
             <div className="ml-4">
-              <p className="text-2xl font-bold">1</p>
+              <p className="text-2xl font-bold">{completedCount}</p>
               <p className="text-sm text-muted-foreground">Completed</p>
             </div>
           </CardContent>
@@ -138,7 +135,7 @@ const Assessments = () => {
           <CardContent className="flex items-center p-6">
             <Clock className="h-8 w-8 text-yellow-600" />
             <div className="ml-4">
-              <p className="text-2xl font-bold">2</p>
+              <p className="text-2xl font-bold">{pendingCount}</p>
               <p className="text-sm text-muted-foreground">Pending</p>
             </div>
           </CardContent>
@@ -148,7 +145,7 @@ const Assessments = () => {
           <CardContent className="flex items-center p-6">
             <Trophy className="h-8 w-8 text-purple-600" />
             <div className="ml-4">
-              <p className="text-2xl font-bold">92%</p>
+              <p className="text-2xl font-bold">{averageScore}%</p>
               <p className="text-sm text-muted-foreground">Average Score</p>
             </div>
           </CardContent>
@@ -164,137 +161,153 @@ const Assessments = () => {
 
         <TabsContent value="upcoming" className="space-y-4">
           <div className="grid gap-4">
-            {upcomingAssessments.map((assessment) => (
-              <Card key={assessment.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-3 flex-1">
-                      <div className="flex items-start gap-3">
-                        {getStatusIcon(assessment.status)}
-                        <div>
-                          <h4 className="font-semibold">{assessment.title}</h4>
-                          <p className="text-sm text-muted-foreground">{assessment.course}</p>
+            {upcomingAssessments.length === 0 ? (
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <p className="text-muted-foreground">No upcoming assessments</p>
+                </CardContent>
+              </Card>
+            ) : (
+              upcomingAssessments.map((assessment) => (
+                <Card key={assessment.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-3 flex-1">
+                        <div className="flex items-start gap-3">
+                          {getStatusIcon(assessment.status)}
+                          <div>
+                            <h4 className="font-semibold">{assessment.title}</h4>
+                            <p className="text-sm text-muted-foreground">{assessment.course}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <FileText className="h-4 w-4" />
+                            {assessment.type}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-4 w-4" />
+                            {assessment.timeLimit}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="h-4 w-4" />
+                            Due: {assessment.dueDate}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                          <Badge className={getStatusColor(assessment.status)}>
+                            {assessment.status}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">
+                            Attempts: {assessment.attempts}/{assessment.maxAttempts}
+                          </span>
+                          <span className="text-sm text-muted-foreground">
+                            Passing Score: {assessment.passingScore}%
+                          </span>
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <FileText className="h-4 w-4" />
-                          {assessment.type}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          {assessment.timeLimit}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          Due: {assessment.dueDate}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-4">
-                        <Badge className={getStatusColor(assessment.status)}>
-                          {assessment.status}
-                        </Badge>
-                        <span className="text-sm text-muted-foreground">
-                          Attempts: {assessment.attempts}/{assessment.maxAttempts}
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          Passing Score: {assessment.passingScore}%
-                        </span>
-                      </div>
+                      <Button>
+                        <Play className="h-4 w-4 mr-2" />
+                        {assessment.status === "In Progress" ? "Continue" : "Start"}
+                      </Button>
                     </div>
-                    
-                    <Button>
-                      <Play className="h-4 w-4 mr-2" />
-                      {assessment.status === "In Progress" ? "Continue" : "Start"}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </TabsContent>
 
         <TabsContent value="completed" className="space-y-4">
           <div className="grid gap-4">
-            {completedAssessments.map((assessment) => (
-              <Card key={assessment.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-3 flex-1">
-                      <div className="flex items-start gap-3">
-                        {getStatusIcon(assessment.status)}
-                        <div>
-                          <h4 className="font-semibold">{assessment.title}</h4>
-                          <p className="text-sm text-muted-foreground">{assessment.course}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <FileText className="h-4 w-4" />
-                          {assessment.type}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          Completed: {assessment.completedDate}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-4">
-                        <Badge className={getStatusColor(assessment.status)}>
-                          {assessment.status}
-                        </Badge>
-                        {assessment.score && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">Score:</span>
-                            <span className={`text-sm font-bold ${
-                              assessment.score >= assessment.passingScore ? "text-green-600" : "text-red-600"
-                            }`}>
-                              {assessment.score}%
-                            </span>
-                          </div>
-                        )}
-                        <span className="text-sm text-muted-foreground">
-                          Attempts: {assessment.attempts}/{assessment.maxAttempts}
-                        </span>
-                      </div>
-
-                      {assessment.score && (
-                        <div className="space-y-1">
-                          <div className="flex justify-between text-sm">
-                            <span>Performance</span>
-                            <span>{assessment.score}% (Passing: {assessment.passingScore}%)</span>
-                          </div>
-                          <Progress 
-                            value={(assessment.score / 100) * 100} 
-                            className="h-2"
-                          />
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        View Results
-                      </Button>
-                      {assessment.status === "Failed" && assessment.attempts < assessment.maxAttempts && (
-                        <Button size="sm">
-                          Retake
-                        </Button>
-                      )}
-                    </div>
-                  </div>
+            {completedAssessments.length === 0 ? (
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <p className="text-muted-foreground">No completed assessments</p>
                 </CardContent>
               </Card>
-            ))}
+            ) : (
+              completedAssessments.map((assessment) => (
+                <Card key={assessment.id}>
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-3 flex-1">
+                        <div className="flex items-start gap-3">
+                          {getStatusIcon(assessment.status)}
+                          <div>
+                            <h4 className="font-semibold">{assessment.title}</h4>
+                            <p className="text-sm text-muted-foreground">{assessment.course}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <FileText className="h-4 w-4" />
+                            {assessment.type}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="h-4 w-4" />
+                            Completed: {assessment.completedDate}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                          <Badge className={getStatusColor(assessment.status)}>
+                            {assessment.status}
+                          </Badge>
+                          {assessment.score && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium">Score:</span>
+                              <span className={`text-sm font-bold ${
+                                assessment.score >= assessment.passingScore ? "text-green-600" : "text-red-600"
+                              }`}>
+                                {assessment.score}%
+                              </span>
+                            </div>
+                          )}
+                          <span className="text-sm text-muted-foreground">
+                            Attempts: {assessment.attempts}/{assessment.maxAttempts}
+                          </span>
+                        </div>
+
+                        {assessment.score && (
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-sm">
+                              <span>Performance</span>
+                              <span>{assessment.score}% (Passing: {assessment.passingScore}%)</span>
+                            </div>
+                            <Progress 
+                              value={(assessment.score / 100) * 100} 
+                              className="h-2"
+                            />
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm">
+                          View Results
+                        </Button>
+                        {assessment.status === "Failed" && assessment.attempts < assessment.maxAttempts && (
+                          <Button size="sm">
+                            Retake
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         </TabsContent>
 
         <TabsContent value="all" className="space-y-4">
           <div className="grid gap-4">
-            {assessments.map((assessment) => (
+            {transformedAssessments.map((assessment) => (
               <Card key={assessment.id}>
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">

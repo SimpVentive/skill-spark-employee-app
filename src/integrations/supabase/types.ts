@@ -181,6 +181,487 @@ export type Database = {
         }
         Relationships: []
       }
+      lti_content_items: {
+        Row: {
+          created_at: string
+          custom_parameters: Json | null
+          id: string
+          iframe_height: number | null
+          iframe_width: number | null
+          is_active: boolean | null
+          media_type: string | null
+          text: string | null
+          thumbnail_url: string | null
+          title: string
+          tool_id: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          custom_parameters?: Json | null
+          id?: string
+          iframe_height?: number | null
+          iframe_width?: number | null
+          is_active?: boolean | null
+          media_type?: string | null
+          text?: string | null
+          thumbnail_url?: string | null
+          title: string
+          tool_id: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          custom_parameters?: Json | null
+          id?: string
+          iframe_height?: number | null
+          iframe_width?: number | null
+          is_active?: boolean | null
+          media_type?: string | null
+          text?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          tool_id?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lti_content_items_tool_id_fkey"
+            columns: ["tool_id"]
+            isOneToOne: false
+            referencedRelation: "lti_tools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lti_grade_passback: {
+        Row: {
+          attempted_at: string
+          error_message: string | null
+          grade_scale: string | null
+          grade_value: number | null
+          id: string
+          launch_id: string
+          passback_url: string
+          response_body: string | null
+          response_code: number | null
+          result_status: string | null
+          source_did: string
+          succeeded_at: string | null
+        }
+        Insert: {
+          attempted_at?: string
+          error_message?: string | null
+          grade_scale?: string | null
+          grade_value?: number | null
+          id?: string
+          launch_id: string
+          passback_url: string
+          response_body?: string | null
+          response_code?: number | null
+          result_status?: string | null
+          source_did: string
+          succeeded_at?: string | null
+        }
+        Update: {
+          attempted_at?: string
+          error_message?: string | null
+          grade_scale?: string | null
+          grade_value?: number | null
+          id?: string
+          launch_id?: string
+          passback_url?: string
+          response_body?: string | null
+          response_code?: number | null
+          result_status?: string | null
+          source_did?: string
+          succeeded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lti_grade_passback_launch_id_fkey"
+            columns: ["launch_id"]
+            isOneToOne: false
+            referencedRelation: "lti_launches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lti_jwks: {
+        Row: {
+          algorithm: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          key_id: string
+          key_type: string
+          private_key_encrypted: string | null
+          public_key: string
+          use_type: string | null
+        }
+        Insert: {
+          algorithm: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_id: string
+          key_type: string
+          private_key_encrypted?: string | null
+          public_key: string
+          use_type?: string | null
+        }
+        Update: {
+          algorithm?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_id?: string
+          key_type?: string
+          private_key_encrypted?: string | null
+          public_key?: string
+          use_type?: string | null
+        }
+        Relationships: []
+      }
+      lti_launches: {
+        Row: {
+          completed_at: string | null
+          context_id: string | null
+          context_label: string | null
+          context_title: string | null
+          context_type: string | null
+          custom_parameters: Json | null
+          grade_passback_url: string | null
+          grade_received: number | null
+          id: string
+          id_token: string | null
+          ip_address: unknown | null
+          last_accessed_at: string | null
+          launch_parameters: Json | null
+          launch_url: string
+          launched_at: string
+          lis_outcome_service_url: string | null
+          lis_person_contact_email_primary: string | null
+          lis_person_name_family: string | null
+          lis_person_name_full: string | null
+          lis_person_name_given: string | null
+          lis_result_sourcedid: string | null
+          lti_message_type: string | null
+          lti_version: string | null
+          nonce_parameter: string | null
+          oauth_consumer_key: string | null
+          oauth_nonce: string | null
+          oauth_signature: string | null
+          oauth_signature_method: string | null
+          oauth_timestamp: number | null
+          oauth_version: string | null
+          resource_link_description: string | null
+          resource_link_id: string | null
+          resource_link_title: string | null
+          return_url: string | null
+          state_parameter: string | null
+          status: string | null
+          tool_consumer_instance_contact_email: string | null
+          tool_consumer_instance_description: string | null
+          tool_consumer_instance_guid: string | null
+          tool_consumer_instance_name: string | null
+          tool_consumer_instance_url: string | null
+          tool_id: string
+          user_agent: string | null
+          user_email: string | null
+          user_id: string
+          user_roles: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          context_id?: string | null
+          context_label?: string | null
+          context_title?: string | null
+          context_type?: string | null
+          custom_parameters?: Json | null
+          grade_passback_url?: string | null
+          grade_received?: number | null
+          id?: string
+          id_token?: string | null
+          ip_address?: unknown | null
+          last_accessed_at?: string | null
+          launch_parameters?: Json | null
+          launch_url: string
+          launched_at?: string
+          lis_outcome_service_url?: string | null
+          lis_person_contact_email_primary?: string | null
+          lis_person_name_family?: string | null
+          lis_person_name_full?: string | null
+          lis_person_name_given?: string | null
+          lis_result_sourcedid?: string | null
+          lti_message_type?: string | null
+          lti_version?: string | null
+          nonce_parameter?: string | null
+          oauth_consumer_key?: string | null
+          oauth_nonce?: string | null
+          oauth_signature?: string | null
+          oauth_signature_method?: string | null
+          oauth_timestamp?: number | null
+          oauth_version?: string | null
+          resource_link_description?: string | null
+          resource_link_id?: string | null
+          resource_link_title?: string | null
+          return_url?: string | null
+          state_parameter?: string | null
+          status?: string | null
+          tool_consumer_instance_contact_email?: string | null
+          tool_consumer_instance_description?: string | null
+          tool_consumer_instance_guid?: string | null
+          tool_consumer_instance_name?: string | null
+          tool_consumer_instance_url?: string | null
+          tool_id: string
+          user_agent?: string | null
+          user_email?: string | null
+          user_id: string
+          user_roles?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          context_id?: string | null
+          context_label?: string | null
+          context_title?: string | null
+          context_type?: string | null
+          custom_parameters?: Json | null
+          grade_passback_url?: string | null
+          grade_received?: number | null
+          id?: string
+          id_token?: string | null
+          ip_address?: unknown | null
+          last_accessed_at?: string | null
+          launch_parameters?: Json | null
+          launch_url?: string
+          launched_at?: string
+          lis_outcome_service_url?: string | null
+          lis_person_contact_email_primary?: string | null
+          lis_person_name_family?: string | null
+          lis_person_name_full?: string | null
+          lis_person_name_given?: string | null
+          lis_result_sourcedid?: string | null
+          lti_message_type?: string | null
+          lti_version?: string | null
+          nonce_parameter?: string | null
+          oauth_consumer_key?: string | null
+          oauth_nonce?: string | null
+          oauth_signature?: string | null
+          oauth_signature_method?: string | null
+          oauth_timestamp?: number | null
+          oauth_version?: string | null
+          resource_link_description?: string | null
+          resource_link_id?: string | null
+          resource_link_title?: string | null
+          return_url?: string | null
+          state_parameter?: string | null
+          status?: string | null
+          tool_consumer_instance_contact_email?: string | null
+          tool_consumer_instance_description?: string | null
+          tool_consumer_instance_guid?: string | null
+          tool_consumer_instance_name?: string | null
+          tool_consumer_instance_url?: string | null
+          tool_id?: string
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string
+          user_roles?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lti_launches_tool_id_fkey"
+            columns: ["tool_id"]
+            isOneToOne: false
+            referencedRelation: "lti_tools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lti_providers: {
+        Row: {
+          auth_login_url: string | null
+          auth_token_url: string | null
+          created_at: string
+          custom_parameters: Json | null
+          deployment_id: string | null
+          id: string
+          is_active: boolean | null
+          issuer: string | null
+          key_set_url: string | null
+          lti_version: string
+          name: string
+          platform_id: string | null
+          privacy_level: string | null
+          updated_at: string
+        }
+        Insert: {
+          auth_login_url?: string | null
+          auth_token_url?: string | null
+          created_at?: string
+          custom_parameters?: Json | null
+          deployment_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          issuer?: string | null
+          key_set_url?: string | null
+          lti_version?: string
+          name: string
+          platform_id?: string | null
+          privacy_level?: string | null
+          updated_at?: string
+        }
+        Update: {
+          auth_login_url?: string | null
+          auth_token_url?: string | null
+          created_at?: string
+          custom_parameters?: Json | null
+          deployment_id?: string | null
+          id?: string
+          is_active?: boolean | null
+          issuer?: string | null
+          key_set_url?: string | null
+          lti_version?: string
+          name?: string
+          platform_id?: string | null
+          privacy_level?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      lti_sessions: {
+        Row: {
+          created_at: string
+          csrf_token: string | null
+          expires_at: string
+          id: string
+          is_active: boolean | null
+          last_activity_at: string | null
+          launch_id: string
+          session_token: string
+        }
+        Insert: {
+          created_at?: string
+          csrf_token?: string | null
+          expires_at: string
+          id?: string
+          is_active?: boolean | null
+          last_activity_at?: string | null
+          launch_id: string
+          session_token: string
+        }
+        Update: {
+          created_at?: string
+          csrf_token?: string | null
+          expires_at?: string
+          id?: string
+          is_active?: boolean | null
+          last_activity_at?: string | null
+          launch_id?: string
+          session_token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lti_sessions_launch_id_fkey"
+            columns: ["launch_id"]
+            isOneToOne: false
+            referencedRelation: "lti_launches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lti_tools: {
+        Row: {
+          assignments_grades_service_enabled: boolean | null
+          category: string | null
+          client_id: string | null
+          consumer_key: string | null
+          consumer_secret_encrypted: string | null
+          content_item_selection_enabled: boolean | null
+          created_at: string
+          custom_parameters: Json | null
+          deep_linking_enabled: boolean | null
+          description: string | null
+          grade_passback_enabled: boolean | null
+          icon_url: string | null
+          id: string
+          is_active: boolean | null
+          launch_url: string
+          name: string
+          names_roles_service_enabled: boolean | null
+          privacy_level: string | null
+          provider_id: string
+          public_key: string | null
+          public_key_set_url: string | null
+          tool_url: string
+          updated_at: string
+        }
+        Insert: {
+          assignments_grades_service_enabled?: boolean | null
+          category?: string | null
+          client_id?: string | null
+          consumer_key?: string | null
+          consumer_secret_encrypted?: string | null
+          content_item_selection_enabled?: boolean | null
+          created_at?: string
+          custom_parameters?: Json | null
+          deep_linking_enabled?: boolean | null
+          description?: string | null
+          grade_passback_enabled?: boolean | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          launch_url: string
+          name: string
+          names_roles_service_enabled?: boolean | null
+          privacy_level?: string | null
+          provider_id: string
+          public_key?: string | null
+          public_key_set_url?: string | null
+          tool_url: string
+          updated_at?: string
+        }
+        Update: {
+          assignments_grades_service_enabled?: boolean | null
+          category?: string | null
+          client_id?: string | null
+          consumer_key?: string | null
+          consumer_secret_encrypted?: string | null
+          content_item_selection_enabled?: boolean | null
+          created_at?: string
+          custom_parameters?: Json | null
+          deep_linking_enabled?: boolean | null
+          description?: string | null
+          grade_passback_enabled?: boolean | null
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          launch_url?: string
+          name?: string
+          names_roles_service_enabled?: boolean | null
+          privacy_level?: string | null
+          provider_id?: string
+          public_key?: string | null
+          public_key_set_url?: string | null
+          tool_url?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lti_tools_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "lti_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -640,7 +1121,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_expired_lti_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

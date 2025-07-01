@@ -5,76 +5,139 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Award, Calendar, CheckCircle, Clock, Download, ExternalLink, Star, Trophy } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+
+interface EarnedCertificate {
+  id: string;
+  title: string;
+  issuer: string;
+  earned_date: string;
+  expiry_date: string | null;
+  credential_id: string;
+  skills: string[];
+  score: number | null;
+  status: string | null;
+}
+
+interface AvailableCertification {
+  id: string;
+  title: string;
+  issuer: string;
+  duration_hours: number | null;
+  level: string;
+  prerequisites: string[] | null;
+  skills_covered: string[] | null;
+  price: number | null;
+  rating: number;
+  enrolled: number;
+}
+
+interface InProgressCertification {
+  id: string;
+  title: string;
+  progress: number;
+  estimatedCompletion: string;
+  nextMilestone: string;
+  timeSpent: number;
+}
 
 const Certifications = () => {
-  // Mock data - will be replaced with Supabase queries once types are updated
-  const mockEarnedCertificates = [
-    {
-      id: "1",
-      title: "React Developer Certification",
-      issuer: "Tech Academy",
-      earnedDate: "2024-01-15",
-      expiryDate: "2026-01-15",
-      credentialId: "TEC-REACT-2024-001",
-      skills: ["React", "JavaScript", "TypeScript", "Redux"],
-      score: 92,
-      status: "Active"
-    }
-  ];
+  // Fetch earned certifications
+  const { data: earnedCertificates = [] } = useQuery({
+    queryKey: ['earned-certifications'],
+    queryFn: async () => {
+      console.log('Fetching earned certifications...');
+      
+      const { data, error } = await supabase
+        .from('user_certifications')
+        .select(`
+          *,
+          certifications (
+            title,
+            issuer,
+            skills_covered
+          )
+        `);
 
-  const mockAvailableCertifications = [
-    {
-      id: "2",
-      title: "Full Stack Web Development",
-      issuer: "Code Institute",
-      duration: "80 hours",
-      level: "Advanced",
-      prerequisites: ["Basic JavaScript", "HTML/CSS"],
-      skills: ["Node.js", "Express", "MongoDB", "React"],
-      price: 299,
-      rating: 4.8,
-      enrolled: 2450
-    },
-    {
-      id: "3",
-      title: "Data Science Fundamentals",
-      issuer: "Data Academy",
-      duration: "60 hours",
-      level: "Intermediate",
-      prerequisites: ["Basic Statistics", "Python Basics"],
-      skills: ["Python", "Pandas", "NumPy", "Machine Learning"],
-      price: 249,
-      rating: 4.7,
-      enrolled: 1890
-    }
-  ];
+      if (error) {
+        console.error('Error fetching earned certifications:', error);
+        return [];
+      }
 
-  const mockInProgressData = [
-    {
-      id: "4",
-      title: "DevOps Engineering",
-      progress: 45,
-      estimatedCompletion: "3 weeks",
-      nextMilestone: "Docker Containers Module",
-      timeSpent: 25
+      console.log('Raw earned certifications:', data);
+
+      const processedData: EarnedCertificate[] = (data || []).map(cert => ({
+        id: cert.id,
+        title: cert.certifications?.title || 'Unknown Certification',
+        issuer: cert.certifications?.issuer || 'Unknown Issuer',
+        earned_date: cert.earned_date,
+        expiry_date: cert.expiry_date,
+        credential_id: cert.credential_id,
+        skills: cert.certifications?.skills_covered || [],
+        score: cert.score,
+        status: cert.status
+      }));
+
+      console.log('Processed earned certifications:', processedData);
+      return processedData;
     }
-  ];
+  });
+
+  // Fetch available certifications
+  const { data: availableCertifications = [] } = useQuery({
+    queryKey: ['available-certifications'],
+    queryFn: async () => {
+      console.log('Fetching available certifications...');
+      
+      const { data, error } = await supabase
+        .from('certifications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching available certifications:', error);
+        return [];
+      }
+
+      console.log('Raw available certifications:', data);
+
+      const processedData: AvailableCertification[] = (data || []).map(cert => ({
+        id: cert.id,
+        title: cert.title,
+        issuer: cert.issuer,
+        duration_hours: cert.duration_hours,
+        level: cert.level,
+        prerequisites: cert.prerequisites,
+        skills_covered: cert.skills_covered,
+        price: cert.price ? Number(cert.price) : null,
+        rating: 4.5 + Math.random() * 0.5, // Mock rating between 4.5-5.0
+        enrolled: Math.floor(Math.random() * 3000) + 500 // Mock enrollment count
+      }));
+
+      console.log('Processed available certifications:', processedData);
+      return processedData;
+    }
+  });
+
+  // Mock in progress data since we don't have user context
+  const inProgressData: InProgressCertification[] = [];
 
   const getLevelColor = (level: string) => {
-    switch (level) {
-      case 'Beginner': return 'bg-corporate-green text-corporate-green';
-      case 'Intermediate': return 'bg-corporate-blue text-corporate-blue';
-      case 'Advanced': return 'bg-corporate-orange text-corporate-orange';
-      case 'Expert': return 'bg-red-100 text-red-800';
+    switch (level.toLowerCase()) {
+      case 'beginner': return 'bg-corporate-green text-corporate-green';
+      case 'intermediate': return 'bg-corporate-blue text-corporate-blue';
+      case 'advanced': return 'bg-corporate-orange text-corporate-orange';
+      case 'expert': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string | null) => {
     switch (status) {
-      case 'Active': return 'bg-corporate-green text-corporate-green';
-      case 'Expiring Soon': return 'bg-corporate-orange text-corporate-orange';
-      case 'Expired': return 'bg-red-100 text-red-800';
+      case 'active': return 'bg-corporate-green text-corporate-green';
+      case 'expiring_soon': return 'bg-corporate-orange text-corporate-orange';
+      case 'expired': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -93,7 +156,7 @@ const Certifications = () => {
             <Award className="h-4 w-4 text-corporate-blue" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-corporate-blue">{mockEarnedCertificates.length}</div>
+            <div className="text-2xl font-bold text-corporate-blue">{earnedCertificates.length}</div>
             <p className="text-xs text-corporate-blue/70">Professional certifications</p>
           </CardContent>
         </Card>
@@ -104,7 +167,7 @@ const Certifications = () => {
             <Clock className="h-4 w-4 text-corporate-orange" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-corporate-orange">{mockInProgressData.length}</div>
+            <div className="text-2xl font-bold text-corporate-orange">{inProgressData.length}</div>
             <p className="text-xs text-corporate-orange/70">Currently pursuing</p>
           </CardContent>
         </Card>
@@ -116,8 +179,8 @@ const Certifications = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-corporate-green">
-              {mockEarnedCertificates.length > 0 
-                ? Math.round(mockEarnedCertificates.reduce((acc, cert) => acc + (cert.score || 0), 0) / mockEarnedCertificates.length)
+              {earnedCertificates.length > 0 
+                ? Math.round(earnedCertificates.reduce((acc, cert) => acc + (cert.score || 0), 0) / earnedCertificates.length)
                 : 0}%
             </div>
             <p className="text-xs text-corporate-green/70">Certification average</p>
@@ -127,14 +190,14 @@ const Certifications = () => {
 
       <Tabs defaultValue="earned" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="earned">Earned ({mockEarnedCertificates.length})</TabsTrigger>
-          <TabsTrigger value="available">Available ({mockAvailableCertifications.length})</TabsTrigger>
-          <TabsTrigger value="progress">In Progress ({mockInProgressData.length})</TabsTrigger>
+          <TabsTrigger value="earned">Earned ({earnedCertificates.length})</TabsTrigger>
+          <TabsTrigger value="available">Available ({availableCertifications.length})</TabsTrigger>
+          <TabsTrigger value="progress">In Progress ({inProgressData.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="earned" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {mockEarnedCertificates.map((cert) => (
+            {earnedCertificates.map((cert) => (
               <Card key={cert.id} className="relative">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -143,7 +206,7 @@ const Certifications = () => {
                       <CardDescription>Issued by {cert.issuer}</CardDescription>
                     </div>
                     <Badge className={getStatusColor(cert.status)}>
-                      {cert.status}
+                      {cert.status || 'Active'}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -153,28 +216,30 @@ const Certifications = () => {
                       <span className="font-medium">Earned:</span>
                       <div className="flex items-center gap-1 text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        {new Date(cert.earnedDate).toLocaleDateString()}
+                        {new Date(cert.earned_date).toLocaleDateString()}
                       </div>
                     </div>
                     <div>
                       <span className="font-medium">Score:</span>
                       <div className="flex items-center gap-1 text-muted-foreground">
                         <Star className="h-3 w-3" />
-                        {cert.score}%
+                        {cert.score || 'N/A'}%
                       </div>
                     </div>
                   </div>
                   
-                  <div>
-                    <span className="font-medium text-sm">Skills Verified:</span>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {cert.skills.map((skill) => (
-                        <Badge key={skill} variant="outline" className="text-xs">
-                          {skill}
-                        </Badge>
-                      ))}
+                  {cert.skills && cert.skills.length > 0 && (
+                    <div>
+                      <span className="font-medium text-sm">Skills Verified:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {cert.skills.map((skill) => (
+                          <Badge key={skill} variant="outline" className="text-xs">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline">
@@ -188,13 +253,13 @@ const Certifications = () => {
                   </div>
 
                   <div className="text-xs text-muted-foreground">
-                    Credential ID: {cert.credentialId}
+                    Credential ID: {cert.credential_id}
                   </div>
                 </CardContent>
               </Card>
             ))}
             
-            {mockEarnedCertificates.length === 0 && (
+            {earnedCertificates.length === 0 && (
               <div className="col-span-2 text-center py-8">
                 <p className="text-muted-foreground">No earned certificates yet. Start by enrolling in available certifications!</p>
               </div>
@@ -204,7 +269,7 @@ const Certifications = () => {
 
         <TabsContent value="available" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {mockAvailableCertifications.map((cert) => (
+            {availableCertifications.map((cert) => (
               <Card key={cert.id} className="hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="space-y-2">
@@ -221,7 +286,9 @@ const Certifications = () => {
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                       <span className="font-medium">Duration:</span>
-                      <div className="text-muted-foreground">{cert.duration}</div>
+                      <div className="text-muted-foreground">
+                        {cert.duration_hours ? `${cert.duration_hours} hours` : 'TBD'}
+                      </div>
                     </div>
                     <div>
                       <span className="font-medium">Enrolled:</span>
@@ -229,18 +296,20 @@ const Certifications = () => {
                     </div>
                   </div>
 
-                  <div>
-                    <span className="font-medium text-sm">Skills Covered:</span>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {cert.skills.map((skill) => (
-                        <Badge key={skill} variant="outline" className="text-xs">
-                          {skill}
-                        </Badge>
-                      ))}
+                  {cert.skills_covered && cert.skills_covered.length > 0 && (
+                    <div>
+                      <span className="font-medium text-sm">Skills Covered:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {cert.skills_covered.map((skill) => (
+                          <Badge key={skill} variant="outline" className="text-xs">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
-                  {cert.prerequisites.length > 0 && (
+                  {cert.prerequisites && cert.prerequisites.length > 0 && (
                     <div>
                       <span className="font-medium text-sm">Prerequisites:</span>
                       <ul className="text-xs text-muted-foreground mt-1">
@@ -254,9 +323,11 @@ const Certifications = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 text-yellow-500" />
-                      <span className="text-sm font-medium">{cert.rating}</span>
+                      <span className="text-sm font-medium">{cert.rating.toFixed(1)}</span>
                     </div>
-                    <div className="text-lg font-bold">${cert.price}</div>
+                    <div className="text-lg font-bold">
+                      {cert.price ? `$${cert.price}` : 'Free'}
+                    </div>
                   </div>
 
                   <Button className="w-full">Enroll Now</Button>
@@ -264,7 +335,7 @@ const Certifications = () => {
               </Card>
             ))}
             
-            {mockAvailableCertifications.length === 0 && (
+            {availableCertifications.length === 0 && (
               <div className="col-span-2 text-center py-8">
                 <p className="text-muted-foreground">No certifications available at the moment.</p>
               </div>
@@ -274,7 +345,7 @@ const Certifications = () => {
 
         <TabsContent value="progress" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {mockInProgressData.map((cert) => (
+            {inProgressData.map((cert) => (
               <Card key={cert.id}>
                 <CardHeader>
                   <CardTitle className="text-lg">{cert.title}</CardTitle>
@@ -301,7 +372,7 @@ const Certifications = () => {
               </Card>
             ))}
             
-            {mockInProgressData.length === 0 && (
+            {inProgressData.length === 0 && (
               <div className="col-span-2 text-center py-8">
                 <p className="text-muted-foreground">No certifications in progress. Start a certification from the Available tab!</p>
               </div>

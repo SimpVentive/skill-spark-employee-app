@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,57 +15,119 @@ import {
   CheckCircle,
   Circle
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
+
+interface LearningPath {
+  id: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  level: string;
+  total_duration_hours: number | null;
+  modules: Array<{
+    id: string;
+    title: string;
+    completed: boolean;
+  }>;
+  progress: number;
+  totalModules: number;
+  completedModules: number;
+  participants: number;
+}
 
 const LearningPaths = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Mock data - will be replaced with Supabase queries once types are updated
-  const mockLearningPaths = [
-    {
-      id: "1",
-      title: "Frontend Development Mastery",
-      description: "Complete guide to modern frontend development with React, TypeScript, and modern tooling",
-      progress: 65,
-      totalModules: 12,
-      completedModules: 8,
-      duration: "40 hours",
-      participants: 1250,
-      category: "Development",
-      level: "Intermediate",
-      modules: [
-        { title: "React Fundamentals", completed: true },
-        { title: "TypeScript Basics", completed: true },
-        { title: "State Management", completed: true },
-        { title: "Testing Strategies", completed: false },
-        { title: "Performance Optimization", completed: false }
-      ]
-    },
-    {
-      id: "2",
-      title: "Data Science Foundations",
-      description: "Learn data analysis, visualization, and machine learning fundamentals",
-      progress: 30,
-      totalModules: 15,
-      completedModules: 4,
-      duration: "60 hours",
-      participants: 890,
-      category: "Data Science",
-      level: "Beginner",
-      modules: [
-        { title: "Python for Data Science", completed: true },
-        { title: "Data Visualization", completed: true },
-        { title: "Statistical Analysis", completed: false },
-        { title: "Machine Learning Intro", completed: false },
-        { title: "Model Evaluation", completed: false }
-      ]
-    }
-  ];
+  const { data: learningPaths = [], isLoading } = useQuery({
+    queryKey: ['learning-paths'],
+    queryFn: async () => {
+      console.log('Fetching learning paths...');
+      
+      // Fetch learning paths with their modules
+      const { data: paths, error: pathsError } = await supabase
+        .from('learning_paths')
+        .select(`
+          *,
+          learning_path_modules (
+            id,
+            title,
+            order_index
+          )
+        `)
+        .order('created_at', { ascending: false });
 
-  const filteredPaths = mockLearningPaths.filter(path =>
+      if (pathsError) {
+        console.error('Error fetching learning paths:', pathsError);
+        throw pathsError;
+      }
+
+      console.log('Raw learning paths data:', paths);
+
+      // For now, we'll use mock progress data since we don't have user authentication
+      // In a real app, you'd fetch user-specific progress data
+      const pathsWithProgress: LearningPath[] = (paths || []).map((path, index) => {
+        const modules = (path.learning_path_modules || [])
+          .sort((a, b) => a.order_index - b.order_index)
+          .map((module, moduleIndex) => ({
+            id: module.id,
+            title: module.title,
+            completed: moduleIndex < Math.floor(Math.random() * 3) + 1 // Mock completion status
+          }));
+
+        const completedModules = modules.filter(m => m.completed).length;
+        const totalModules = modules.length || 5; // Default to 5 if no modules
+        const progress = totalModules > 0 ? Math.round((completedModules / totalModules) * 100) : 0;
+
+        return {
+          id: path.id,
+          title: path.title,
+          description: path.description || 'No description available',
+          category: path.category || 'General',
+          level: path.level,
+          total_duration_hours: path.total_duration_hours,
+          modules,
+          progress,
+          totalModules,
+          completedModules,
+          participants: Math.floor(Math.random() * 2000) + 500 // Mock participants count
+        };
+      });
+
+      console.log('Processed learning paths:', pathsWithProgress);
+      return pathsWithProgress;
+    }
+  });
+
+  const filteredPaths = learningPaths.filter(path =>
     path.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    path.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    path.category.toLowerCase().includes(searchTerm.toLowerCase())
+    (path.description && path.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (path.category && path.category.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Learning Paths</h1>
+          <p className="text-muted-foreground">Loading structured learning journeys...</p>
+        </div>
+        <div className="grid gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardHeader>
+                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-20 bg-gray-200 rounded"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -105,7 +167,7 @@ const LearningPaths = () => {
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
-                      {path.duration}
+                      {path.total_duration_hours ? `${path.total_duration_hours} hours` : 'Duration TBD'}
                     </div>
                     <div className="flex items-center gap-1">
                       <Users className="h-4 w-4" />
@@ -136,8 +198,8 @@ const LearningPaths = () => {
               <div className="space-y-3">
                 <h4 className="font-medium">Modules</h4>
                 <div className="grid gap-2">
-                  {path.modules.map((module, index) => (
-                    <div key={index} className="flex items-center gap-3 p-2 rounded-lg border">
+                  {path.modules.length > 0 ? path.modules.map((module, index) => (
+                    <div key={module.id} className="flex items-center gap-3 p-2 rounded-lg border">
                       {module.completed ? (
                         <CheckCircle className="h-5 w-5 text-green-600" />
                       ) : (
@@ -152,7 +214,11 @@ const LearningPaths = () => {
                         </Badge>
                       )}
                     </div>
-                  ))}
+                  )) : (
+                    <div className="text-center py-4 text-muted-foreground">
+                      No modules available yet
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -170,7 +236,7 @@ const LearningPaths = () => {
           </Card>
         ))}
         
-        {filteredPaths.length === 0 && (
+        {filteredPaths.length === 0 && !isLoading && (
           <div className="text-center py-8">
             <p className="text-muted-foreground">No learning paths found matching your search.</p>
           </div>

@@ -41,14 +41,14 @@ function AppSidebar() {
   if (!user) return null;
 
   return (
-    <Sidebar className="border-r">
-      <SidebarHeader className="border-b">
-        <Link to="/dashboard" className="flex items-center space-x-2 px-4 py-3">
+    <Sidebar variant="sidebar" className="w-64">
+      <SidebarHeader className="p-4 border-b">
+        <Link to="/dashboard" className="flex items-center space-x-2">
           <h1 className="text-xl font-bold text-blue-600">SkillSpark</h1>
         </Link>
       </SidebarHeader>
       
-      <SidebarContent>
+      <SidebarContent className="p-4">
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -58,8 +58,8 @@ function AppSidebar() {
                 return (
                   <SidebarMenuItem key={item.name}>
                     <SidebarMenuButton asChild isActive={isActive}>
-                      <Link to={item.href} className="flex items-center w-full">
-                        <item.icon className="mr-3 h-5 w-5" />
+                      <Link to={item.href} className="flex items-center w-full gap-3 px-3 py-2 rounded-md">
+                        <item.icon className="h-5 w-5" />
                         <span>{item.name}</span>
                       </Link>
                     </SidebarMenuButton>
@@ -75,8 +75,8 @@ function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location.pathname === '/notifications'}>
-                  <Link to="/notifications" className="flex items-center w-full">
-                    <Settings className="mr-3 h-5 w-5" />
+                  <Link to="/notifications" className="flex items-center w-full gap-3 px-3 py-2 rounded-md">
+                    <Settings className="h-5 w-5" />
                     <span>Notifications</span>
                   </Link>
                 </SidebarMenuButton>
@@ -97,13 +97,13 @@ const AppLayout = () => {
   };
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen bg-gray-50 flex w-full">
         <AppSidebar />
         
         <div className="flex-1 flex flex-col">
           {/* Top Navigation */}
-          <nav className="bg-white shadow-sm border-b h-16">
+          <nav className="bg-white shadow-sm border-b h-16 flex-shrink-0">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
               <div className="flex justify-between items-center h-full">
                 <div className="flex items-center">
@@ -137,7 +137,7 @@ const AppLayout = () => {
           </nav>
 
           {/* Main Content */}
-          <main className="flex-1 p-6">
+          <main className="flex-1 p-6 overflow-auto">
             <Outlet />
           </main>
         </div>

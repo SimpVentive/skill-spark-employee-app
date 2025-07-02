@@ -42,14 +42,14 @@ function AppSidebar() {
   if (!user) return null;
 
   return (
-    <Sidebar className="w-64 border-r bg-white shadow-sm">
-      <SidebarHeader className="p-6 border-b bg-white">
+    <Sidebar className="border-r">
+      <SidebarHeader className="p-4 border-b">
         <Link to="/dashboard" className="flex items-center space-x-2">
           <h1 className="text-xl font-bold text-blue-600">SkillSpark</h1>
         </Link>
       </SidebarHeader>
       
-      <SidebarContent className="px-4 py-6 bg-white">
+      <SidebarContent className="p-4">
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
             Navigation
@@ -118,40 +118,38 @@ const AppLayout = () => {
       <div className="min-h-screen bg-gray-50 flex w-full">
         <AppSidebar />
         
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col">
           {/* Top Navigation */}
-          <nav className="bg-white shadow-sm border-b h-16 flex-shrink-0 z-10">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-              <div className="flex justify-between items-center h-full">
-                <div className="flex items-center">
-                  <SidebarTrigger className="mr-4 p-2 hover:bg-gray-100 rounded-md" />
-                </div>
+          <header className="bg-white shadow-sm border-b h-16 flex-shrink-0 px-4">
+            <div className="flex justify-between items-center h-full max-w-7xl mx-auto w-full">
+              <div className="flex items-center">
+                <SidebarTrigger className="mr-4" />
+              </div>
 
-                <div className="flex items-center space-x-4">
-                  {user && (
-                    <>
-                      <Link to="/notifications">
-                        <Button variant="ghost" size="sm">
-                          <Bell className="h-5 w-5" />
-                        </Button>
-                      </Link>
-                      <span className="text-sm text-gray-700">
-                        Welcome, {user.email}
-                      </span>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={handleSignOut}
-                      >
-                        <LogOut className="h-4 w-4 mr-2" />
-                        Sign Out
+              <div className="flex items-center space-x-4">
+                {user && (
+                  <>
+                    <Link to="/notifications">
+                      <Button variant="ghost" size="sm">
+                        <Bell className="h-5 w-5" />
                       </Button>
-                    </>
-                  )}
-                </div>
+                    </Link>
+                    <span className="text-sm text-gray-700">
+                      Welcome, {user.email}
+                    </span>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleSignOut}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
-          </nav>
+          </header>
 
           {/* Main Content */}
           <main className="flex-1 p-6 overflow-auto">

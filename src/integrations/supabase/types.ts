@@ -53,6 +53,98 @@ export type Database = {
           },
         ]
       }
+      calendar_events: {
+        Row: {
+          calendar_sync_id: string
+          created_at: string | null
+          description: string | null
+          end_time: string
+          external_event_id: string
+          id: string
+          is_synced: boolean | null
+          location: string | null
+          start_time: string
+          title: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          calendar_sync_id: string
+          created_at?: string | null
+          description?: string | null
+          end_time: string
+          external_event_id: string
+          id?: string
+          is_synced?: boolean | null
+          location?: string | null
+          start_time: string
+          title: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          calendar_sync_id?: string
+          created_at?: string | null
+          description?: string | null
+          end_time?: string
+          external_event_id?: string
+          id?: string
+          is_synced?: boolean | null
+          location?: string | null
+          start_time?: string
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_events_calendar_sync_id_fkey"
+            columns: ["calendar_sync_id"]
+            isOneToOne: false
+            referencedRelation: "calendar_sync"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calendar_sync: {
+        Row: {
+          access_token: string | null
+          calendar_id: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          provider: string
+          refresh_token: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          calendar_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          provider: string
+          refresh_token?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          calendar_id?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          provider?: string
+          refresh_token?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       certifications: {
         Row: {
           category: string | null
@@ -671,6 +763,8 @@ export type Database = {
           id: string
           manager_id: string | null
           position: string | null
+          sso_provider: string | null
+          sso_provider_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -681,6 +775,8 @@ export type Database = {
           id: string
           manager_id?: string | null
           position?: string | null
+          sso_provider?: string | null
+          sso_provider_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -691,6 +787,8 @@ export type Database = {
           id?: string
           manager_id?: string | null
           position?: string | null
+          sso_provider?: string | null
+          sso_provider_id?: string | null
           updated_at?: string | null
         }
         Relationships: []

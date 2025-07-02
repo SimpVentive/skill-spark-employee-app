@@ -1,9 +1,9 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CalendarSyncSettings from "@/components/calendar/CalendarSyncSettings";
 import { 
   Calendar as CalendarIcon, 
   Clock, 
@@ -11,7 +11,8 @@ import {
   MapPin, 
   Plus,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Settings
 } from "lucide-react";
 
 const Calendar = () => {
@@ -100,10 +101,14 @@ const Calendar = () => {
       </div>
 
       <Tabs defaultValue="calendar" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="calendar">Monthly Calendar</TabsTrigger>
           <TabsTrigger value="events">Upcoming Events</TabsTrigger>
           <TabsTrigger value="schedule">My Schedule</TabsTrigger>
+          <TabsTrigger value="sync">
+            <Settings className="h-4 w-4 mr-1" />
+            Calendar Sync
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="calendar" className="space-y-4">
@@ -228,6 +233,10 @@ const Calendar = () => {
               ))}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="sync" className="space-y-4">
+          <CalendarSyncSettings />
         </TabsContent>
       </Tabs>
     </div>

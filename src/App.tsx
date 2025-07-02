@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from '@/contexts/AuthContext';
 import AppLayout from '@/components/layout/AppLayout';
 import Index from '@/pages/Index';
+import Landing from '@/pages/Landing';
 import Auth from '@/pages/Auth';
 import Dashboard from '@/pages/Dashboard';
 import Calendar from '@/pages/Calendar';
@@ -23,6 +24,7 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
+            <Route path="/landing" element={<Landing />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/" element={<AppLayout />}>
               <Route index element={<Index />} />

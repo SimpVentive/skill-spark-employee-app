@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import CreateLearningPathDialog from "@/components/learning-paths/CreateLearningPathDialog";
 
 interface LearningPath {
   id: string;
@@ -39,7 +40,7 @@ interface LearningPath {
 const LearningPaths = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: learningPaths = [], isLoading } = useQuery({
+  const { data: learningPaths = [], isLoading, refetch } = useQuery({
     queryKey: ['learning-paths'],
     queryFn: async () => {
       console.log('Fetching learning paths...');
@@ -105,6 +106,11 @@ const LearningPaths = () => {
     (path.category && path.category.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
+  const handlePathCreated = () => {
+    console.log('Learning path created, refetching data...');
+    refetch();
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -146,10 +152,7 @@ const LearningPaths = () => {
             className="pl-10"
           />
         </div>
-        <Button>
-          <BookOpen className="h-4 w-4 mr-2" />
-          Create Path
-        </Button>
+        <CreateLearningPathDialog onPathCreated={handlePathCreated} />
       </div>
 
       <div className="grid gap-6">

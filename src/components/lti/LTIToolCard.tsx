@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, Play, Settings } from "lucide-react";
+import { ExternalLink, Play, Settings, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -17,6 +17,8 @@ interface LTITool {
   category?: string;
   grade_passback_enabled: boolean;
   deep_linking_enabled: boolean;
+  names_roles_service_enabled: boolean;
+  assignments_grades_service_enabled: boolean;
   is_active: boolean;
   lti_providers: {
     name: string;
@@ -32,6 +34,8 @@ interface Props {
 const LTIToolCard = ({ tool, onLaunch }: Props) => {
   const [isLaunching, setIsLaunching] = useState(false);
   const { toast } = useToast();
+
+  const isLTI13 = tool.lti_providers.lti_version === 'LTI-1p3';
 
   const handleLaunch = async () => {
     if (!onLaunch) return;
@@ -82,9 +86,10 @@ const LTIToolCard = ({ tool, onLaunch }: Props) => {
         form.submit();
         document.body.removeChild(form);
 
+        const versionText = isLTI13 ? "LTI 1.3" : "LTI 1.1";
         toast({
           title: "Tool Launched",
-          description: `${tool.name} has been opened in a new window.`,
+          description: `${tool.name} (${versionText}) has been opened in a new window.`,
         });
       }
     } catch (error) {
@@ -112,11 +117,22 @@ const LTIToolCard = ({ tool, onLaunch }: Props) => {
               />
             ) : (
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <ExternalLink className="w-5 h-5 text-primary" />
+                {isLTI13 ? (
+                  <Zap className="w-5 h-5 text-primary" />
+                ) : (
+                  <ExternalLink className="w-5 h-5 text-primary" />
+                )}
               </div>
             )}
             <div>
-              <CardTitle className="text-lg">{tool.name}</CardTitle>
+              <CardTitle className="text-lg flex items-center gap-2">
+                {tool.name}
+                {isLTI13 && (
+                  <Badge variant="default" className="text-xs bg-blue-500">
+                    1.3
+                  </Badge>
+                )}
+              </CardTitle>
               <CardDescription className="text-sm">
                 by {tool.lti_providers.name}
               </CardDescription>
@@ -149,6 +165,16 @@ const LTIToolCard = ({ tool, onLaunch }: Props) => {
               Deep Linking
             </Badge>
           )}
+          {tool.names_roles_service_enabled && (
+            <Badge variant="outline" className="text-xs">
+              Names & Roles
+            </Badge>
+          )}
+          {tool.assignments_grades_service_enabled && (
+            <Badge variant="outline" className="text-xs">
+              Assignments & Grades
+            </Badge>
+          )}
         </div>
         
         <div className="flex gap-2">
@@ -156,9 +182,14 @@ const LTIToolCard = ({ tool, onLaunch }: Props) => {
             onClick={handleLaunch}
             disabled={isLaunching || !tool.is_active}
             className="flex-1"
+            variant={isLTI13 ? "default" : "secondary"}
           >
-            <Play className="w-4 h-4 mr-2" />
-            {isLaunching ? "Launching..." : "Launch Tool"}
+            {isLTI13 ? (
+              <Zap className="w-4 h-4 mr-2" />
+            ) : (
+              <Play className="w-4 h-4 mr-2" />
+            )}
+            {isLaunching ? "Launching..." : `Launch ${isLTI13 ? "1.3" : "1.1"} Tool`}
           </Button>
           
           <Button variant="outline" size="icon">

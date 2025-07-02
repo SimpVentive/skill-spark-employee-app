@@ -42,7 +42,7 @@ function AppSidebar() {
   if (!user) return null;
 
   return (
-    <Sidebar className="border-r">
+    <Sidebar>
       <SidebarHeader className="p-4 border-b">
         <Link to="/dashboard" className="flex items-center space-x-2">
           <h1 className="text-xl font-bold text-blue-600">SkillSpark</h1>
@@ -114,7 +114,7 @@ const AppLayout = () => {
   };
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider>
       <div className="min-h-screen bg-gray-50 flex w-full">
         <AppSidebar />
         

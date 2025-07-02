@@ -1,12 +1,22 @@
 
-import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import SSOConfig from '@/components/sso/SSOConfig';
 import BadgeIntegration from '@/components/badges/BadgeIntegration';
 import VideoPlayer from '@/components/media/VideoPlayer';
 import MotivationalMessaging from '@/components/notifications/MotivationalMessaging';
-import { Shield, Award, Play, MessageSquare } from 'lucide-react';
+import CalendarSync from '@/components/calendar/CalendarSync';
+import CommunicationIntegration from '@/components/communication/CommunicationIntegration';
+import CollaborativeLearning from '@/components/collaboration/CollaborativeLearning';
+import { 
+  Shield, 
+  Award, 
+  Play, 
+  MessageSquare, 
+  Calendar,
+  Bell,
+  Users
+} from 'lucide-react';
 
 const Integrations = () => {
   return (
@@ -20,7 +30,7 @@ const Integrations = () => {
         </div>
 
         <Tabs defaultValue="sso" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="sso" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
               SSO & Auth
@@ -36,6 +46,18 @@ const Integrations = () => {
             <TabsTrigger value="messaging" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               Messaging
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              Calendar
+            </TabsTrigger>
+            <TabsTrigger value="communication" className="flex items-center gap-2">
+              <Bell className="h-4 w-4" />
+              Communication
+            </TabsTrigger>
+            <TabsTrigger value="collaboration" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              Collaboration
             </TabsTrigger>
           </TabsList>
 
@@ -53,6 +75,18 @@ const Integrations = () => {
 
           <TabsContent value="messaging" className="mt-6">
             <MotivationalMessaging />
+          </TabsContent>
+
+          <TabsContent value="calendar" className="mt-6">
+            <CalendarSync />
+          </TabsContent>
+
+          <TabsContent value="communication" className="mt-6">
+            <CommunicationIntegration />
+          </TabsContent>
+
+          <TabsContent value="collaboration" className="mt-6">
+            <CollaborativeLearning />
           </TabsContent>
         </Tabs>
       </div>

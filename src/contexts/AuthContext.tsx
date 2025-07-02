@@ -26,35 +26,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
+    console.log('AuthProvider: Setting up auth state listener');
+    
+    // Get initial session
+    const getInitialSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        console.log('AuthProvider: Initial session check', { session: session?.user?.email, error });
+        
+        if (error) {
+          console.error('AuthProvider: Error getting initial session:', error);
+        }
+        
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
         
-        // Handle profile creation for new users
+        if (session?.user) {
+          createUserProfile(session.user);
+        }
+      } catch (error) {
+        console.error('AuthProvider: Exception getting initial session:', error);
+        setLoading(false);
+      }
+    };
+
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('AuthProvider: Auth state changed', { event, email: session?.user?.email });
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+        
         if (event === 'SIGNED_IN' && session?.user) {
-          setTimeout(() => {
-            createUserProfile(session.user);
-          }, 0);
+          await createUserProfile(session.user);
         }
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    getInitialSession();
 
-    return () => subscription.unsubscribe();
+    return () => {
+      console.log('AuthProvider: Cleaning up auth listener');
+      subscription.unsubscribe();
+    };
   }, []);
 
   const createUserProfile = async (user: User) => {
     try {
+      console.log('AuthProvider: Creating/updating user profile for:', user.email);
       const { error } = await supabase
         .from('profiles')
         .upsert({
@@ -66,17 +88,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
       
       if (error) {
-        console.error('Error creating user profile:', error);
+        console.error('AuthProvider: Error creating user profile:', error);
+      } else {
+        console.log('AuthProvider: User profile created/updated successfully');
       }
     } catch (error) {
-      console.error('Error in createUserProfile:', error);
+      console.error('AuthProvider: Exception in createUserProfile:', error);
     }
   };
 
   const signOut = async () => {
+    console.log('AuthProvider: Signing out user');
     const { error } = await supabase.auth.signOut();
     if (error) {
-      console.error('Error signing out:', error);
+      console.error('AuthProvider: Error signing out:', error);
     }
   };
 
@@ -86,6 +111,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     signOut,
   };
+
+  console.log('AuthProvider: Current state', { 
+    hasUser: !!user, 
+    email: user?.email, 
+    loading,
+    hasSession: !!session 
+  });
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

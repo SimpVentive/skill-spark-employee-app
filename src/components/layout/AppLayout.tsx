@@ -14,6 +14,7 @@ import {
   Menu
 } from 'lucide-react';
 import { useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -25,25 +26,65 @@ const navigation = [
 ];
 
 const AppLayout = () => {
-  const { user, signOut } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  console.log('AppLayout: Rendering with state', { 
+    hasUser: !!user, 
+    email: user?.email, 
+    loading, 
+    pathname: location.pathname 
+  });
 
   const handleSignOut = async () => {
     await signOut();
   };
 
-  if (!user) {
-    return <div>Loading...</div>;
+  // Show loading skeleton while auth is initializing
+  if (loading) {
+    console.log('AppLayout: Showing loading state');
+    return (
+      <div className="min-h-screen bg-gray-50 flex">
+        {/* Loading Sidebar */}
+        <div className="w-64 bg-white shadow-lg border-r">
+          <div className="p-4 border-b">
+            <Skeleton className="h-8 w-32" />
+          </div>
+          <div className="p-4 space-y-2">
+            {[...Array(6)].map((_, i) => (
+              <Skeleton key={i} className="h-10 w-full" />
+            ))}
+          </div>
+        </div>
+        
+        {/* Loading Main Content */}
+        <div className="flex-1">
+          <div className="h-16 bg-white border-b flex items-center px-6">
+            <Skeleton className="h-6 w-48" />
+          </div>
+          <div className="p-6">
+            <Skeleton className="h-8 w-64 mb-4" />
+            <Skeleton className="h-32 w-full mb-4" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  console.log('AppLayout rendering with user:', user.email);
-  console.log('Current location:', location.pathname);
-  console.log('Sidebar open:', sidebarOpen);
+  // If no user after loading, redirect to auth
+  if (!user) {
+    console.log('AppLayout: No user found, should redirect to auth');
+    window.location.href = '/auth';
+    return null;
+  }
+
+  console.log('AppLayout: Rendering authenticated layout');
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Fixed Sidebar - Always Visible */}
+      {/* Sidebar */}
       <div className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white shadow-lg transition-all duration-300 flex-shrink-0 border-r`}>
         {/* Sidebar Header */}
         <div className="p-4 border-b flex items-center justify-between">

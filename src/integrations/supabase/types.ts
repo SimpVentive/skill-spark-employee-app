@@ -53,6 +53,51 @@ export type Database = {
           },
         ]
       }
+      badges: {
+        Row: {
+          badge_type: string
+          created_at: string | null
+          criteria: string | null
+          description: string | null
+          external_badge_id: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          name: string
+          points_value: number | null
+          provider: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          badge_type: string
+          created_at?: string | null
+          criteria?: string | null
+          description?: string | null
+          external_badge_id?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name: string
+          points_value?: number | null
+          provider?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          badge_type?: string
+          created_at?: string | null
+          criteria?: string | null
+          description?: string | null
+          external_badge_id?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name?: string
+          points_value?: number | null
+          provider?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       calendar_events: {
         Row: {
           calendar_sync_id: string
@@ -196,6 +241,54 @@ export type Database = {
           title?: string
           updated_at?: string
           validity_months?: number | null
+        }
+        Relationships: []
+      }
+      content_media: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_seconds: number | null
+          external_id: string | null
+          file_size: number | null
+          id: string
+          is_active: boolean | null
+          media_type: string
+          provider: string | null
+          thumbnail_url: string | null
+          title: string
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_seconds?: number | null
+          external_id?: string | null
+          file_size?: number | null
+          id?: string
+          is_active?: boolean | null
+          media_type: string
+          provider?: string | null
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_seconds?: number | null
+          external_id?: string | null
+          file_size?: number | null
+          id?: string
+          is_active?: boolean | null
+          media_type?: string
+          provider?: string | null
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string | null
+          url?: string
         }
         Relationships: []
       }
@@ -754,6 +847,45 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          achievement_notifications: boolean | null
+          created_at: string | null
+          email_enabled: boolean | null
+          id: string
+          motivation_emails: boolean | null
+          phone_number: string | null
+          progress_updates: boolean | null
+          sms_enabled: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          achievement_notifications?: boolean | null
+          created_at?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          motivation_emails?: boolean | null
+          phone_number?: string | null
+          progress_updates?: boolean | null
+          sms_enabled?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          achievement_notifications?: boolean | null
+          created_at?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          motivation_emails?: boolean | null
+          phone_number?: string | null
+          progress_updates?: boolean | null
+          sms_enabled?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
@@ -885,6 +1017,45 @@ export type Database = {
         }
         Relationships: []
       }
+      sso_configurations: {
+        Row: {
+          client_id: string | null
+          client_secret_encrypted: string | null
+          created_at: string | null
+          domain: string
+          id: string
+          is_active: boolean | null
+          issuer_url: string | null
+          metadata_url: string | null
+          provider: string
+          updated_at: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          client_secret_encrypted?: string | null
+          created_at?: string | null
+          domain: string
+          id?: string
+          is_active?: boolean | null
+          issuer_url?: string | null
+          metadata_url?: string | null
+          provider: string
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          client_secret_encrypted?: string | null
+          created_at?: string | null
+          domain?: string
+          id?: string
+          is_active?: boolean | null
+          issuer_url?: string | null
+          metadata_url?: string | null
+          provider?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       user_assessment_attempts: {
         Row: {
           assessment_id: string
@@ -925,6 +1096,41 @@ export type Database = {
             columns: ["assessment_id"]
             isOneToOne: false
             referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string | null
+          external_credential_id: string | null
+          id: string
+          user_id: string
+          verification_url: string | null
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string | null
+          external_credential_id?: string | null
+          id?: string
+          user_id: string
+          verification_url?: string | null
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string | null
+          external_credential_id?: string | null
+          id?: string
+          user_id?: string
+          verification_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
             referencedColumns: ["id"]
           },
         ]

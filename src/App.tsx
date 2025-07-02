@@ -1,145 +1,48 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import Auth from "@/pages/Auth";
-import Index from "./pages/Index";
-import Dashboard from "./pages/Dashboard";
-import Calendar from "./pages/Calendar";
-import CourseCatalog from "./pages/CourseCatalog";
-import LearningPaths from "./pages/LearningPaths";
-import Assessments from "./pages/Assessments";
-import Certifications from "./pages/Certifications";
-import Analytics from "./pages/Analytics";
-import Achievements from "./pages/Achievements";
-import SocialLearning from "./pages/SocialLearning";
-import Bookmarks from "./pages/Bookmarks";
-import OfflineContent from "./pages/OfflineContent";
-import NotFound from "./pages/NotFound";
-import AppLayout from "./components/layout/AppLayout";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider } from '@/contexts/AuthContext';
+import AppLayout from '@/components/layout/AppLayout';
+import Index from '@/pages/Index';
+import Auth from '@/pages/Auth';
+import Dashboard from '@/pages/Dashboard';
+import Calendar from '@/pages/Calendar';
+import Achievements from '@/pages/Achievements'; 
+import Analytics from '@/pages/Analytics';
+import CourseCatalog from '@/pages/CourseCatalog';
+import NotificationSettings from '@/components/notifications/NotificationSettings';
+import NotFound from '@/pages/NotFound';
 
 const queryClient = new QueryClient();
 
-const AppContent = () => {
-  const { user } = useAuth();
-
-  if (!user) {
-    return (
-      <Routes>
-        <Route path="/auth" element={<Auth />} />
-        <Route path="*" element={<Auth />} />
-      </Routes>
-    );
-  }
-
+function App() {
   return (
-    <Routes>
-      <Route path="/auth" element={<Auth />} />
-      <Route path="/" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Index />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/dashboard" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Dashboard />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/calendar" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Calendar />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/catalog" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <CourseCatalog />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/learning-paths" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <LearningPaths />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/assessments" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Assessments />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/certifications" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Certifications />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/analytics" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Analytics />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/achievements" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Achievements />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/social" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <SocialLearning />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/bookmarks" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <Bookmarks />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="/offline" element={
-        <ProtectedRoute>
-          <AppLayout>
-            <OfflineContent />
-          </AppLayout>
-        </ProtectedRoute>
-      } />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={<Index />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="catalog" element={<CourseCatalog />} />
+              <Route path="calendar" element={<Calendar />} />
+              <Route path="achievements" element={<Achievements />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="notifications" element={
+                <div className="container mx-auto px-4 py-8">
+                  <NotificationSettings />
+                </div>
+              } />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <Toaster />
+        </Router>
+      </AuthProvider>
+    </QueryClientProvider>
   );
-};
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+}
 
 export default App;

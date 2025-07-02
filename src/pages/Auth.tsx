@@ -21,47 +21,96 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password || !fullName) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "Password Too Short",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
+    console.log('Attempting sign up for:', email);
 
     try {
       const redirectUrl = `${window.location.origin}/`;
+      console.log('Sign up redirect URL:', redirectUrl);
       
-      const { error } = await supabase.auth.signUp({
-        email,
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
         password,
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            full_name: fullName,
+            full_name: fullName.trim(),
           }
         }
       });
 
+      console.log('Sign up response:', { data, error });
+
       if (error) {
-        if (error.message.includes('already registered')) {
+        console.error('Sign up error:', error);
+        
+        if (error.message.includes('User already registered')) {
           toast({
-            title: "Account exists",
-            description: "This email is already registered. Please sign in instead.",
+            title: "Account Already Exists",
+            description: "This email is already registered. Please sign in instead or use a different email.",
+            variant: "destructive",
+          });
+        } else if (error.message.includes('rate limit') || error.message.includes('email send rate limit')) {
+          toast({
+            title: "Too Many Attempts",
+            description: "Please wait a minute before trying to sign up again.",
+            variant: "destructive",
+          });
+        } else if (error.message.includes('Invalid email')) {
+          toast({
+            title: "Invalid Email",
+            description: "Please enter a valid email address.",
             variant: "destructive",
           });
         } else {
           toast({
-            title: "Sign up failed",
-            description: error.message,
+            title: "Sign Up Failed",
+            description: error.message || "An unexpected error occurred. Please try again.",
             variant: "destructive",
           });
         }
       } else {
-        toast({
-          title: "Check your email",
-          description: "We've sent you a confirmation link to complete your registration.",
-        });
+        console.log('Sign up successful:', data);
+        
+        if (data.user && !data.session) {
+          // Email confirmation required
+          toast({
+            title: "Check Your Email",
+            description: "We've sent you a confirmation link. Please check your email to complete registration.",
+          });
+        } else if (data.session) {
+          // Auto-signed in (email confirmation disabled)
+          toast({
+            title: "Welcome!",
+            description: "Your account has been created successfully.",
+          });
+          navigate('/dashboard');
+        }
       }
     } catch (error) {
-      console.error('Sign up error:', error);
+      console.error('Sign up exception:', error);
       toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        title: "Network Error",
+        description: "Unable to connect to the server. Please check your internet connection and try again.",
         variant: "destructive",
       });
     } finally {
@@ -71,32 +120,62 @@ const Auth = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter both email and password.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
+    console.log('Attempting sign in for:', email);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
         password,
       });
 
+      console.log('Sign in response:', { data, error });
+
       if (error) {
-        toast({
-          title: "Sign in failed",
-          description: error.message,
-          variant: "destructive",
-        });
+        console.error('Sign in error:', error);
+        
+        if (error.message.includes('Invalid login credentials')) {
+          toast({
+            title: "Invalid Credentials",
+            description: "The email or password you entered is incorrect.",
+            variant: "destructive",
+          });
+        } else if (error.message.includes('Email not confirmed')) {
+          toast({
+            title: "Email Not Confirmed",
+            description: "Please check your email and click the confirmation link before signing in.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Sign In Failed",
+            description: error.message || "An unexpected error occurred. Please try again.",
+            variant: "destructive",
+          });
+        }
       } else {
+        console.log('Sign in successful:', data);
         toast({
-          title: "Welcome back!",
+          title: "Welcome Back!",
           description: "You've been signed in successfully.",
         });
-        navigate('/');
+        navigate('/dashboard');
       }
     } catch (error) {
-      console.error('Sign in error:', error);
+      console.error('Sign in exception:', error);
       toast({
-        title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        title: "Network Error",
+        description: "Unable to connect to the server. Please check your internet connection and try again.",
         variant: "destructive",
       });
     } finally {
@@ -106,6 +185,8 @@ const Auth = () => {
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
+    console.log('Attempting Google sign in');
+
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -115,17 +196,18 @@ const Auth = () => {
       });
 
       if (error) {
+        console.error('Google sign in error:', error);
         toast({
-          title: "Google Sign In failed",
-          description: error.message,
+          title: "Google Sign In Failed",
+          description: error.message || "Unable to sign in with Google. Please try again.",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error('Google sign in error:', error);
+      console.error('Google sign in exception:', error);
       toast({
-        title: "Error",
-        description: "Failed to sign in with Google. Please try again.",
+        title: "Network Error",
+        description: "Failed to connect with Google. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -135,6 +217,8 @@ const Auth = () => {
 
   const handleLinkedInSignIn = async () => {
     setLoading(true);
+    console.log('Attempting LinkedIn sign in');
+
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'linkedin_oidc',
@@ -144,17 +228,18 @@ const Auth = () => {
       });
 
       if (error) {
+        console.error('LinkedIn sign in error:', error);
         toast({
-          title: "LinkedIn Sign In failed",
-          description: error.message,
+          title: "LinkedIn Sign In Failed",
+          description: error.message || "Unable to sign in with LinkedIn. Please try again.",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error('LinkedIn sign in error:', error);
+      console.error('LinkedIn sign in exception:', error);
       toast({
-        title: "Error",
-        description: "Failed to sign in with LinkedIn. Please try again.",
+        title: "Network Error",
+        description: "Failed to connect with LinkedIn. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -194,6 +279,7 @@ const Auth = () => {
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10"
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -209,6 +295,7 @@ const Auth = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10"
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -232,6 +319,7 @@ const Auth = () => {
                       onChange={(e) => setFullName(e.target.value)}
                       className="pl-10"
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -247,6 +335,7 @@ const Auth = () => {
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10"
                       required
+                      disabled={loading}
                     />
                   </div>
                 </div>
@@ -257,12 +346,13 @@ const Auth = () => {
                     <Input
                       id="signup-password"
                       type="password"
-                      placeholder="Create a password"
+                      placeholder="Create a password (min 6 characters)"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10"
                       required
                       minLength={6}
+                      disabled={loading}
                     />
                   </div>
                 </div>

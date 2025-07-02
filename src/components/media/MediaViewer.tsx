@@ -43,38 +43,54 @@ const MediaViewer = () => {
     if (mediaItem.media_type === 'video') {
       if (mediaItem.provider === 'youtube') {
         return (
-          <iframe
-            src={mediaItem.url}
-            title={mediaItem.title}
-            className="w-full h-64 rounded-lg"
-            allowFullScreen
-          />
+          <div className="aspect-video w-full">
+            <iframe
+              src={mediaItem.url}
+              title={mediaItem.title}
+              className="w-full h-full rounded-lg"
+              allowFullScreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            />
+          </div>
         );
       } else if (mediaItem.provider === 'vimeo') {
         return (
-          <iframe
-            src={mediaItem.url}
-            title={mediaItem.title}
-            className="w-full h-64 rounded-lg"
-            allowFullScreen
-          />
+          <div className="aspect-video w-full">
+            <iframe
+              src={mediaItem.url}
+              title={mediaItem.title}
+              className="w-full h-full rounded-lg"
+              allowFullScreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            />
+          </div>
         );
       }
     } else if (mediaItem.media_type === 'document' || mediaItem.media_type === 'pdf') {
       return (
-        <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+        <div className="w-full h-96 bg-gray-100 rounded-lg flex items-center justify-center">
           <div className="text-center">
-            <FileText className="h-12 w-12 mx-auto text-gray-400 mb-2" />
-            <p className="text-sm text-gray-600">Document Preview</p>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="mt-2"
-              onClick={() => window.open(mediaItem.url, '_blank')}
-            >
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Open Document
-            </Button>
+            <FileText className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+            <p className="text-lg font-semibold mb-2">{mediaItem.title}</p>
+            <p className="text-sm text-gray-600 mb-4">{mediaItem.description}</p>
+            <div className="space-y-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mr-2"
+                onClick={() => window.open(mediaItem.url, '_blank')}
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Open Document
+              </Button>
+              <Button 
+                size="sm"
+                onClick={() => window.open(`https://docs.google.com/viewer?url=${encodeURIComponent(mediaItem.url)}&embedded=true`, '_blank')}
+              >
+                <FileText className="h-4 w-4 mr-2" />
+                Preview with Google Docs
+              </Button>
+            </div>
           </div>
         </div>
       );

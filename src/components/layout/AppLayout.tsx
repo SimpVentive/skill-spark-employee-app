@@ -32,6 +32,7 @@ const navigation = [
   { name: 'Calendar', href: '/calendar', icon: Calendar },
   { name: 'Achievements', href: '/achievements', icon: Trophy },
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+  { name: 'Integrations', href: '/integrations', icon: Settings },
 ];
 
 function AppSidebar() {

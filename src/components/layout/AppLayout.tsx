@@ -12,111 +12,139 @@ import {
   LogOut,
   Bell
 } from 'lucide-react';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from '@/components/ui/sidebar';
+
+const navigation = [
+  { name: 'Dashboard', href: '/dashboard', icon: Home },
+  { name: 'Course Catalog', href: '/catalog', icon: BookOpen },
+  { name: 'Calendar', href: '/calendar', icon: Calendar },
+  { name: 'Achievements', href: '/achievements', icon: Trophy },
+  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+];
+
+function AppSidebar() {
+  const { user } = useAuth();
+  const location = useLocation();
+  const { state } = useSidebar();
+
+  if (!user) return null;
+
+  return (
+    <Sidebar>
+      <SidebarHeader>
+        <Link to="/dashboard" className="flex items-center space-x-2 px-2 py-4">
+          <h1 className="text-xl font-bold text-blue-600">SkillSpark</h1>
+        </Link>
+      </SidebarHeader>
+      
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigation.map((item) => {
+                const isActive = location.pathname === item.href;
+                return (
+                  <SidebarMenuItem key={item.name}>
+                    <SidebarMenuButton asChild isActive={isActive}>
+                      <Link to={item.href} className="flex items-center">
+                        <item.icon className="mr-3 h-5 w-5" />
+                        <span>{item.name}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={location.pathname === '/notifications'}>
+                  <Link to="/notifications" className="flex items-center">
+                    <Settings className="mr-3 h-5 w-5" />
+                    <span>Notifications</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
+}
 
 const AppLayout = () => {
   const { user, signOut } = useAuth();
-  const location = useLocation();
-
-  const navigation = [
-    { name: 'Dashboard', href: '/', icon: Home },
-    { name: 'Course Catalog', href: '/catalog', icon: BookOpen },
-    { name: 'Calendar', href: '/calendar', icon: Calendar },
-    { name: 'Achievements', href: '/achievements', icon: Trophy },
-    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-  ];
 
   const handleSignOut = async () => {
     await signOut();
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation */}
-      <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link to="/" className="flex-shrink-0">
-                <h1 className="text-2xl font-bold text-blue-600">SkillSpark</h1>
-              </Link>
-            </div>
+    <SidebarProvider>
+      <div className="min-h-screen bg-gray-50 flex w-full">
+        <AppSidebar />
+        
+        <div className="flex-1 flex flex-col">
+          {/* Top Navigation */}
+          <nav className="bg-white shadow-sm border-b h-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
+              <div className="flex justify-between items-center h-full">
+                <div className="flex items-center">
+                  <SidebarTrigger className="mr-4" />
+                </div>
 
-            <div className="flex items-center space-x-4">
-              {user && (
-                <>
-                  <Link to="/notifications">
-                    <Button variant="ghost" size="sm">
-                      <Bell className="h-5 w-5" />
-                    </Button>
-                  </Link>
-                  <span className="text-sm text-gray-700">
-                    Welcome, {user.email}
-                  </span>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleSignOut}
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <div className="flex">
-        {/* Sidebar Navigation */}
-        {user && (
-          <div className="w-64 bg-white shadow-sm min-h-screen">
-            <nav className="mt-8">
-              <div className="px-4 space-y-2">
-                {navigation.map((item) => {
-                  const isActive = location.pathname === item.href;
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                        isActive
-                          ? 'bg-blue-100 text-blue-700'
-                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                      }`}
-                    >
-                      <item.icon className="mr-3 h-5 w-5" />
-                      {item.name}
-                    </Link>
-                  );
-                })}
+                <div className="flex items-center space-x-4">
+                  {user && (
+                    <>
+                      <Link to="/notifications">
+                        <Button variant="ghost" size="sm">
+                          <Bell className="h-5 w-5" />
+                        </Button>
+                      </Link>
+                      <span className="text-sm text-gray-700">
+                        Welcome, {user.email}
+                      </span>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleSignOut}
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Sign Out
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
-              
-              <div className="mt-8 pt-8 border-t border-gray-200 px-4">
-                <Link
-                  to="/notifications"
-                  className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                    location.pathname === '/notifications'
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                  }`}
-                >
-                  <Settings className="mr-3 h-5 w-5" />
-                  Notifications
-                </Link>
-              </div>
-            </nav>
-          </div>
-        )}
+            </div>
+          </nav>
 
-        {/* Main Content */}
-        <div className="flex-1">
-          <main>
+          {/* Main Content */}
+          <main className="flex-1">
             <Outlet />
           </main>
         </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 

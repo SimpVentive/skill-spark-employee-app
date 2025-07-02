@@ -1,16 +1,76 @@
 
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useCalendarSync } from "@/hooks/useCalendarSync";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { Calendar, Clock, RefreshCw, Unlink, Link } from "lucide-react";
 
-const CalendarSyncSettings = () => {
-  const { syncSettings, events, loading, connectProvider, disconnectProvider, syncCalendar } = useCalendarSync();
+interface CalendarEvent {
+  id: string;
+  title: string;
+  description?: string;
+  start_time: string;
+  end_time: string;
+  location?: string;
+}
 
-  const googleSync = syncSettings.find(s => s.provider === 'google');
-  const outlookSync = syncSettings.find(s => s.provider === 'outlook');
+const CalendarSyncSettings = () => {
+  const { calendarSyncs, loading, connectCalendar, disconnectCalendar, refetch } = useCalendarSync();
+  const { user } = useAuth();
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(false);
+
+  const googleSync = calendarSyncs.find(s => s.provider === 'google');
+  const outlookSync = calendarSyncs.find(s => s.provider === 'outlook');
+
+  const fetchCalendarEvents = async () => {
+    if (!user) return;
+    
+    setEventsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('calendar_events')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('start_time', { ascending: true })
+        .limit(10);
+
+      if (error) throw error;
+      setEvents(data || []);
+    } catch (error) {
+      console.error('Error fetching calendar events:', error);
+    } finally {
+      setEventsLoading(false);
+    }
+  };
+
+  const handleConnect = async (provider: 'google' | 'outlook') => {
+    const result = await connectCalendar(provider);
+    if (!result.error) {
+      await fetchCalendarEvents();
+    }
+  };
+
+  const handleDisconnect = async (syncId: string) => {
+    await disconnectCalendar(syncId);
+    await fetchCalendarEvents();
+  };
+
+  const handleSync = async (syncId: string) => {
+    // In a real implementation, this would trigger a sync with the external calendar
+    console.log('Syncing calendar:', syncId);
+    await fetchCalendarEvents();
+  };
+
+  useEffect(() => {
+    if (user && (googleSync || outlookSync)) {
+      fetchCalendarEvents();
+    }
+  }, [user, googleSync, outlookSync]);
 
   return (
     <div className="space-y-6">
@@ -47,7 +107,7 @@ const CalendarSyncSettings = () => {
                   </svg>
                   <span className="font-medium">Google Calendar</span>
                 </div>
-                {googleSync ? (
+                {googleSync && googleSync.is_active ? (
                   <Badge variant="default">Connected</Badge>
                 ) : (
                   <Badge variant="outline">Not Connected</Badge>
@@ -55,12 +115,12 @@ const CalendarSyncSettings = () => {
               </div>
               
               <div className="flex gap-2">
-                {googleSync ? (
+                {googleSync && googleSync.is_active ? (
                   <>
                     <Button
                       size="sm"
-                      onClick={() => syncCalendar(googleSync.id)}
-                      disabled={loading}
+                      onClick={() => handleSync(googleSync.id)}
+                      disabled={loading || eventsLoading}
                     >
                       <RefreshCw className="h-4 w-4 mr-1" />
                       Sync Now
@@ -68,7 +128,8 @@ const CalendarSyncSettings = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => disconnectProvider(googleSync.id)}
+                      onClick={() => handleDisconnect(googleSync.id)}
+                      disabled={loading}
                     >
                       <Unlink className="h-4 w-4 mr-1" />
                       Disconnect
@@ -77,7 +138,7 @@ const CalendarSyncSettings = () => {
                 ) : (
                   <Button
                     size="sm"
-                    onClick={() => connectProvider('google')}
+                    onClick={() => handleConnect('google')}
                     disabled={loading}
                   >
                     <Link className="h-4 w-4 mr-1" />
@@ -96,7 +157,7 @@ const CalendarSyncSettings = () => {
                   </svg>
                   <span className="font-medium">Outlook Calendar</span>
                 </div>
-                {outlookSync ? (
+                {outlookSync && outlookSync.is_active ? (
                   <Badge variant="default">Connected</Badge>
                 ) : (
                   <Badge variant="outline">Not Connected</Badge>
@@ -104,12 +165,12 @@ const CalendarSyncSettings = () => {
               </div>
               
               <div className="flex gap-2">
-                {outlookSync ? (
+                {outlookSync && outlookSync.is_active ? (
                   <>
                     <Button
                       size="sm"
-                      onClick={() => syncCalendar(outlookSync.id)}
-                      disabled={loading}
+                      onClick={() => handleSync(outlookSync.id)}
+                      disabled={loading || eventsLoading}
                     >
                       <RefreshCw className="h-4 w-4 mr-1" />
                       Sync Now
@@ -117,7 +178,8 @@ const CalendarSyncSettings = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => disconnectProvider(outlookSync.id)}
+                      onClick={() => handleDisconnect(outlookSync.id)}
+                      disabled={loading}
                     >
                       <Unlink className="h-4 w-4 mr-1" />
                       Disconnect
@@ -126,7 +188,7 @@ const CalendarSyncSettings = () => {
                 ) : (
                   <Button
                     size="sm"
-                    onClick={() => connectProvider('outlook')}
+                    onClick={() => handleConnect('outlook')}
                     disabled={loading}
                   >
                     <Link className="h-4 w-4 mr-1" />
@@ -144,7 +206,9 @@ const CalendarSyncSettings = () => {
               <Clock className="h-4 w-4" />
               Synced Training Deadlines ({events.length})
             </h4>
-            {events.length > 0 ? (
+            {eventsLoading ? (
+              <p className="text-muted-foreground text-sm">Loading events...</p>
+            ) : events.length > 0 ? (
               <div className="space-y-2">
                 {events.slice(0, 3).map((event) => (
                   <div key={event.id} className="border rounded-lg p-3">

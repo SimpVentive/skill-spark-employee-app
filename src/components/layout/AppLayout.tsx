@@ -24,7 +24,6 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-  useSidebar,
 } from '@/components/ui/sidebar';
 
 const navigation = [
@@ -38,14 +37,13 @@ const navigation = [
 function AppSidebar() {
   const { user } = useAuth();
   const location = useLocation();
-  const { state } = useSidebar();
 
   if (!user) return null;
 
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <Link to="/dashboard" className="flex items-center space-x-2 px-2 py-4">
+    <Sidebar className="border-r">
+      <SidebarHeader className="border-b">
+        <Link to="/dashboard" className="flex items-center space-x-2 px-4 py-3">
           <h1 className="text-xl font-bold text-blue-600">SkillSpark</h1>
         </Link>
       </SidebarHeader>
@@ -60,7 +58,7 @@ function AppSidebar() {
                 return (
                   <SidebarMenuItem key={item.name}>
                     <SidebarMenuButton asChild isActive={isActive}>
-                      <Link to={item.href} className="flex items-center">
+                      <Link to={item.href} className="flex items-center w-full">
                         <item.icon className="mr-3 h-5 w-5" />
                         <span>{item.name}</span>
                       </Link>
@@ -77,7 +75,7 @@ function AppSidebar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild isActive={location.pathname === '/notifications'}>
-                  <Link to="/notifications" className="flex items-center">
+                  <Link to="/notifications" className="flex items-center w-full">
                     <Settings className="mr-3 h-5 w-5" />
                     <span>Notifications</span>
                   </Link>
@@ -139,7 +137,7 @@ const AppLayout = () => {
           </nav>
 
           {/* Main Content */}
-          <main className="flex-1">
+          <main className="flex-1 p-6">
             <Outlet />
           </main>
         </div>

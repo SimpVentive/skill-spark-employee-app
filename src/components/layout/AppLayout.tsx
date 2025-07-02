@@ -10,21 +10,10 @@ import {
   BarChart3, 
   Settings,
   LogOut,
-  Bell
+  Bell,
+  Menu
 } from 'lucide-react';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
+import { useState } from 'react';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -35,129 +24,118 @@ const navigation = [
   { name: 'Integrations', href: '/integrations', icon: Settings },
 ];
 
-function AppSidebar() {
-  const { user } = useAuth();
-  const location = useLocation();
-
-  if (!user) return null;
-
-  return (
-    <Sidebar>
-      <SidebarHeader className="p-4 border-b">
-        <Link to="/dashboard" className="flex items-center space-x-2">
-          <h1 className="text-xl font-bold text-blue-600">SkillSpark</h1>
-        </Link>
-      </SidebarHeader>
-      
-      <SidebarContent className="p-4">
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-            Navigation
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              {navigation.map((item) => {
-                const isActive = location.pathname === item.href;
-                return (
-                  <SidebarMenuItem key={item.name}>
-                    <SidebarMenuButton asChild isActive={isActive}>
-                      <Link 
-                        to={item.href} 
-                        className={`flex items-center w-full gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                          isActive 
-                            ? 'bg-blue-50 text-blue-700 font-medium' 
-                            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                        }`}
-                      >
-                        <item.icon className="h-5 w-5" />
-                        <span>{item.name}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup className="mt-8">
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={location.pathname === '/notifications'}>
-                  <Link 
-                    to="/notifications" 
-                    className={`flex items-center w-full gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                      location.pathname === '/notifications'
-                        ? 'bg-blue-50 text-blue-700 font-medium'
-                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
-                  >
-                    <Settings className="h-5 w-5" />
-                    <span>Notifications</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
-  );
-}
-
 const AppLayout = () => {
   const { user, signOut } = useAuth();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleSignOut = async () => {
     await signOut();
   };
 
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+  console.log('AppLayout rendering with user:', user.email);
+  console.log('Current location:', location.pathname);
+  console.log('Sidebar open:', sidebarOpen);
+
   return (
-    <SidebarProvider>
-      <div className="min-h-screen bg-gray-50 flex w-full">
-        <AppSidebar />
-        
-        <div className="flex-1 flex flex-col">
-          {/* Top Navigation */}
-          <header className="bg-white shadow-sm border-b h-16 flex-shrink-0 px-4">
-            <div className="flex justify-between items-center h-full max-w-7xl mx-auto w-full">
-              <div className="flex items-center">
-                <SidebarTrigger className="mr-4" />
-              </div>
-
-              <div className="flex items-center space-x-4">
-                {user && (
-                  <>
-                    <Link to="/notifications">
-                      <Button variant="ghost" size="sm">
-                        <Bell className="h-5 w-5" />
-                      </Button>
-                    </Link>
-                    <span className="text-sm text-gray-700">
-                      Welcome, {user.email}
-                    </span>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={handleSignOut}
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Sign Out
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          </header>
-
-          {/* Main Content */}
-          <main className="flex-1 p-6 overflow-auto">
-            <Outlet />
-          </main>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Fixed Sidebar - Always Visible */}
+      <div className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white shadow-lg transition-all duration-300 flex-shrink-0 border-r`}>
+        {/* Sidebar Header */}
+        <div className="p-4 border-b flex items-center justify-between">
+          {sidebarOpen && (
+            <Link to="/dashboard" className="flex items-center space-x-2">
+              <h1 className="text-xl font-bold text-blue-600">SkillSpark</h1>
+            </Link>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2"
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
         </div>
+
+        {/* Navigation Links */}
+        <nav className="p-4">
+          <div className="space-y-2">
+            {navigation.map((item) => {
+              const isActive = location.pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                    isActive 
+                      ? 'bg-blue-50 text-blue-700 font-medium' 
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                  }`}
+                >
+                  <item.icon className="h-5 w-5 flex-shrink-0" />
+                  {sidebarOpen && <span>{item.name}</span>}
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Settings Section */}
+          <div className="mt-8 pt-4 border-t">
+            <Link
+              to="/notifications"
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
+                location.pathname === '/notifications'
+                  ? 'bg-blue-50 text-blue-700 font-medium'
+                  : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+              }`}
+            >
+              <Bell className="h-5 w-5 flex-shrink-0" />
+              {sidebarOpen && <span>Notifications</span>}
+            </Link>
+          </div>
+        </nav>
       </div>
-    </SidebarProvider>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top Header */}
+        <header className="bg-white shadow-sm border-b h-16 flex-shrink-0 px-6">
+          <div className="flex justify-between items-center h-full">
+            <div className="flex items-center">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Welcome back, {user.email}
+              </h2>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <Link to="/notifications">
+                <Button variant="ghost" size="sm">
+                  <Bell className="h-5 w-5" />
+                </Button>
+              </Link>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleSignOut}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        {/* Page Content */}
+        <main className="flex-1 p-6 overflow-auto">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   );
 };
 

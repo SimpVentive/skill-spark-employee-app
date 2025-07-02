@@ -41,14 +41,14 @@ function AppSidebar() {
   if (!user) return null;
 
   return (
-    <Sidebar collapsible="icon" className="border-r bg-white">
-      <SidebarHeader className="p-6 border-b">
+    <Sidebar className="w-64 border-r bg-white shadow-sm">
+      <SidebarHeader className="p-6 border-b bg-white">
         <Link to="/dashboard" className="flex items-center space-x-2">
           <h1 className="text-xl font-bold text-blue-600">SkillSpark</h1>
         </Link>
       </SidebarHeader>
       
-      <SidebarContent className="px-4 py-6">
+      <SidebarContent className="px-4 py-6 bg-white">
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
             Navigation

@@ -5,9 +5,10 @@ import LTIToolCard from "./LTIToolCard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const LTIToolsGrid = () => {
-  const { data: tools = [], isLoading } = useQuery({
+  const { data: tools = [], isLoading, error } = useQuery({
     queryKey: ['lti-tools'],
     queryFn: async () => {
+      console.log('Fetching LTI tools...');
       const { data, error } = await supabase
         .from('lti_tools')
         .select(`
@@ -19,10 +20,24 @@ const LTIToolsGrid = () => {
         `)
         .eq('is_active', true);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching LTI tools:', error);
+        throw error;
+      }
+      
+      console.log('Fetched LTI tools:', data);
       return data || [];
     }
   });
+
+  if (error) {
+    console.error('LTI Tools query error:', error);
+    return (
+      <div className="text-center py-12">
+        <p className="text-muted-foreground">Failed to load LTI tools. Please try again.</p>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

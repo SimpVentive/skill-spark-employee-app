@@ -84,26 +84,33 @@ const H5PIntegration = () => {
   const embedH5PContent = (content: H5PContent) => {
     setSelectedContent(content);
     
-    // Initialize H5P event listeners
-    if (window.H5P) {
-      window.H5P.externalDispatcher.on('xAPI', (event: any) => {
-        console.log('H5P xAPI Event:', event);
-        
-        // Track interactions
-        if (event.getVerb() === 'interacted') {
-          updateContentStats(content.id, 'interaction');
-        }
-        
-        // Track completions
-        if (event.getVerb() === 'completed') {
-          updateContentStats(content.id, 'completion');
-        }
-        
-        // Track scores
-        if (event.getScore()) {
-          updateContentStats(content.id, 'score', event.getScore().scaled * 100);
-        }
-      });
+    // Check if H5P is available and has the external dispatcher
+    if (typeof window !== 'undefined' && window.H5P?.externalDispatcher) {
+      try {
+        window.H5P.externalDispatcher.on('xAPI', (event: H5P.XAPIEvent) => {
+          console.log('H5P xAPI Event:', event);
+          
+          // Track interactions
+          if (event.getVerb() === 'interacted') {
+            updateContentStats(content.id, 'interaction');
+          }
+          
+          // Track completions
+          if (event.getVerb() === 'completed') {
+            updateContentStats(content.id, 'completion');
+          }
+          
+          // Track scores
+          const score = event.getScore();
+          if (score) {
+            updateContentStats(content.id, 'score', score.scaled * 100);
+          }
+        });
+      } catch (error) {
+        console.warn('H5P event listener setup failed:', error);
+      }
+    } else {
+      console.warn('H5P library not found or external dispatcher not available');
     }
     
     toast.success(`Embedded: ${content.title}`);

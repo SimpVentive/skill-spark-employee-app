@@ -11,6 +11,7 @@ import CollaborativeLearning from '@/components/collaboration/CollaborativeLearn
 import GoogleAnalytics from '@/components/integrations/GoogleAnalytics';
 import OpenAIIntegration from '@/components/integrations/OpenAIIntegration';
 import LinkedInLearning from '@/components/integrations/LinkedInLearning';
+import AlisonIntegration from '@/components/integrations/AlisonIntegration';
 import SCORMIntegration from '@/components/elearning/SCORMIntegration';
 import XAPIIntegration from '@/components/elearning/XAPIIntegration';
 import CMI5Integration from '@/components/elearning/CMI5Integration';
@@ -30,7 +31,8 @@ import {
   BookOpen,
   Activity,
   Puzzle,
-  Youtube
+  Youtube,
+  GraduationCap
 } from 'lucide-react';
 
 const Integrations = () => {
@@ -45,7 +47,7 @@ const Integrations = () => {
         </div>
 
         <Tabs defaultValue="scorm" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-15">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-16">
             <TabsTrigger value="scorm" className="flex items-center gap-2">
               <BookOpen className="h-4 w-4" />
               <span className="hidden sm:inline">SCORM</span>
@@ -77,6 +79,10 @@ const Integrations = () => {
             <TabsTrigger value="linkedin" className="flex items-center gap-2">
               <Linkedin className="h-4 w-4" />
               <span className="hidden sm:inline">LinkedIn</span>
+            </TabsTrigger>
+            <TabsTrigger value="alison" className="flex items-center gap-2">
+              <GraduationCap className="h-4 w-4" />
+              <span className="hidden sm:inline">Alison</span>
             </TabsTrigger>
             <TabsTrigger value="sso" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
@@ -168,6 +174,10 @@ const Integrations = () => {
                 <p className="text-sm text-gray-500 mt-2">Coming soon...</p>
               </div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="alison" className="mt-6">
+            <AlisonIntegration />
           </TabsContent>
 
           <TabsContent value="sso" className="mt-6">

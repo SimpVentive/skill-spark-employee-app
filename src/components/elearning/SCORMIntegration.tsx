@@ -1,14 +1,10 @@
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { BookOpen, Upload, Play, CheckCircle, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import SCORMSettings from './scorm/SCORMSettings';
+import SCORMUploader from './scorm/SCORMUploader';
+import SCORMPackageList from './scorm/SCORMPackageList';
+import SCORMPlayerStatus from './scorm/SCORMPlayerStatus';
 
 interface SCORMPackage {
   id: string;
@@ -147,124 +143,22 @@ const SCORMIntegration = () => {
         </p>
       </div>
 
-      {/* Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5" />
-            SCORM Settings
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="tracking">Enable Progress Tracking</Label>
-              <p className="text-sm text-muted-foreground">
-                Track learner progress and completion status
-              </p>
-            </div>
-            <Switch
-              id="tracking"
-              checked={trackingEnabled}
-              onCheckedChange={setTrackingEnabled}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <SCORMSettings 
+        trackingEnabled={trackingEnabled}
+        onTrackingChange={setTrackingEnabled}
+      />
 
-      {/* Upload Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Upload className="h-5 w-5" />
-            Upload SCORM Package
-          </CardTitle>
-          <CardDescription>
-            Upload a ZIP file containing your SCORM-compliant learning content
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="scorm-upload">SCORM Package (ZIP)</Label>
-            <Input
-              id="scorm-upload"
-              type="file"
-              accept=".zip"
-              onChange={handleFileUpload}
-              disabled={isUploading}
-            />
-            {isUploading && (
-              <p className="text-sm text-muted-foreground">
-                Uploading and processing package...
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <SCORMUploader 
+        isUploading={isUploading}
+        onFileUpload={handleFileUpload}
+      />
 
-      {/* SCORM Packages List */}
-      <div>
-        <h3 className="text-xl font-semibold mb-4">SCORM Packages</h3>
-        <div className="grid gap-4">
-          {packages.map((pkg) => (
-            <Card key={pkg.id}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">{pkg.title}</CardTitle>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={pkg.status === 'active' ? 'default' : 'secondary'}>
-                      {pkg.status}
-                    </Badge>
-                    <Badge variant="outline">{pkg.version}</Badge>
-                  </div>
-                </div>
-                <CardDescription>
-                  Uploaded: {new Date(pkg.uploadedAt).toLocaleDateString()}
-                  {pkg.lastLaunched && (
-                    <span className="ml-4">
-                      Last launched: {new Date(pkg.lastLaunched).toLocaleDateString()}
-                    </span>
-                  )}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => launchSCORM(pkg)}
-                    className="flex items-center gap-2"
-                  >
-                    <Play className="h-4 w-4" />
-                    Launch
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    View Details
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    Analytics
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
+      <SCORMPackageList 
+        packages={packages}
+        onLaunch={launchSCORM}
+      />
 
-      {/* SCORM Player Status */}
-      {selectedPackage && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              Currently Playing: {selectedPackage.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              SCORM communication is active. Progress and completion data will be tracked.
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      <SCORMPlayerStatus selectedPackage={selectedPackage} />
     </div>
   );
 };

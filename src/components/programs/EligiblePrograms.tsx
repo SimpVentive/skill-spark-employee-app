@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, MapPin, User, Clock, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { handleEnrollmentRequest } from "./RequestHandler";
 
 const EligiblePrograms = () => {
   const { data: programs = [], isLoading } = useQuery({
@@ -107,7 +108,10 @@ const EligiblePrograms = () => {
                 )}
                 
                 <div className="flex gap-2 pt-4">
-                  <Button className="flex-1">
+                  <Button 
+                    className="flex-1"
+                    onClick={() => handleEnrollmentRequest(program.id, program.title)}
+                  >
                     Request Enrollment
                   </Button>
                   <Button variant="outline">

@@ -1,205 +1,299 @@
 
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   BookOpen, 
-  Trophy, 
+  Calendar, 
   Clock, 
-  Target, 
-  TrendingUp,
+  Trophy, 
+  TrendingUp, 
   Play,
-  Award,
+  GraduationCap,
+  Target,
   Users
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const stats = [
-    { icon: BookOpen, label: "Courses Enrolled", value: "12", color: "text-blue-600" },
-    { icon: Trophy, label: "Achievements", value: "24", color: "text-yellow-600" },
-    { icon: Clock, label: "Hours Learned", value: "156", color: "text-green-600" },
-    { icon: Target, label: "Skills Mastered", value: "8", color: "text-purple-600" },
-  ];
+  // Fetch user's learning progress
+  const { data: learningProgress = [] } = useQuery({
+    queryKey: ['learning-progress'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('user_learning_progress')
+        .select('*');
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
 
-  const recentCourses = [
-    { id: 1, title: "React Development Fundamentals", progress: 75, type: "Development", lastAccessed: "2 hours ago" },
-    { id: 2, title: "Digital Marketing Strategy", progress: 45, type: "Marketing", lastAccessed: "1 day ago" },
-    { id: 3, title: "Project Management Basics", progress: 90, type: "Management", lastAccessed: "3 days ago" },
-  ];
+  // Fetch user's enrolled programs
+  const { data: enrolledPrograms = [] } = useQuery({
+    queryKey: ['enrolled-programs'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('user_program_enrollments')
+        .select(`
+          *,
+          programs (*),
+          program_sessions (*)
+        `)
+        .in('status', ['enrolled', 'in-progress']);
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
 
-  const currentPrograms = [
-    { id: 1, title: "Advanced Leadership Development", progress: 30, type: "TNA Based", nextSession: "Tomorrow 10:00 AM" },
-    { id: 2, title: "Compliance and Ethics Training", progress: 100, type: "Mandatory", nextSession: "Completed" },
-  ];
+  // Calculate total learning hours
+  const totalHours = learningProgress.reduce((sum, progress) => sum + (progress.hours_completed || 0), 0);
+  const iltHours = learningProgress.find(p => p.activity_type === 'ilt')?.hours_completed || 0;
+  const elearningHours = learningProgress.find(p => p.activity_type === 'elearning')?.hours_completed || 0;
+  const peerToPeerHours = learningProgress.find(p => p.activity_type === 'peer-to-peer')?.hours_completed || 0;
 
-  const achievements = [
-    { id: 1, title: "First Course Completed", icon: "🎯", earned: true },
-    { id: 2, title: "Week Streak", icon: "🔥", earned: true },
-    { id: 3, title: "Social Learner", icon: "👥", earned: false },
-    { id: 4, title: "Assessment Master", icon: "📝", earned: true },
-  ];
+  const handleLearningHoursClick = () => {
+    navigate('/analytics');
+  };
 
-  const handleContinueLearning = () => {
-    navigate('/catalog');
+  const handleCoursesEnrolledClick = () => {
+    navigate('/programs');
+  };
+
+  const handleAchievementsClick = () => {
+    navigate('/achievements');
+  };
+
+  const handleContinueLearningClick = () => {
+    navigate('/programs');
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-6 p-4 sm:p-6">
       <div>
-        <h1 className="text-3xl font-bold">Learning Dashboard</h1>
-        <p className="text-muted-foreground">Track your progress and continue your learning journey</p>
+        <h1 className="text-2xl sm:text-3xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground mt-1">
+          Welcome back! Here's your learning overview.
+        </p>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <Card key={index}>
-            <CardContent className="flex items-center p-6">
-              <stat.icon className={`h-8 w-8 ${stat.color}`} />
-              <div className="ml-4">
-                <p className="text-2xl font-bold">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Continue Learning */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Play className="h-5 w-5" />
-              Continue Learning
-            </CardTitle>
-            <CardDescription>Pick up where you left off</CardDescription>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <Card 
+          className="cursor-pointer hover:shadow-md transition-shadow"
+          onClick={handleCoursesEnrolledClick}
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Courses Enrolled</CardTitle>
+            <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Current E-Learning Courses */}
-            <div className="space-y-3">
-              <h4 className="font-medium text-sm text-muted-foreground">E-Learning Courses</h4>
-              {recentCourses.map((course) => (
-                <div key={course.id} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium">{course.title}</h4>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Badge variant="outline">{course.type}</Badge>
-                        <span>•</span>
-                        <span>{course.lastAccessed}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <Progress value={course.progress} className="h-2" />
-                  <div className="text-right text-sm text-muted-foreground">
-                    {course.progress}% complete
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Current Training Programs */}
-            <div className="space-y-3 pt-4 border-t">
-              <h4 className="font-medium text-sm text-muted-foreground">Training Programs</h4>
-              {currentPrograms.map((program) => (
-                <div key={program.id} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium">{program.title}</h4>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Badge variant="outline">{program.type}</Badge>
-                        <span>•</span>
-                        <span>{program.nextSession}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <Progress value={program.progress} className="h-2" />
-                  <div className="text-right text-sm text-muted-foreground">
-                    {program.progress}% complete
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <Button className="w-full mt-4" onClick={handleContinueLearning}>
-              <Play className="h-4 w-4 mr-2" />
-              Continue Learning
-            </Button>
+          <CardContent>
+            <div className="text-2xl font-bold">{enrolledPrograms.length}</div>
+            <p className="text-xs text-muted-foreground">
+              Active enrollments
+            </p>
           </CardContent>
         </Card>
 
-        {/* Recent Achievements */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Award className="h-5 w-5" />
-              Recent Achievements
-            </CardTitle>
-            <CardDescription>Your learning milestones</CardDescription>
+        <Card 
+          className="cursor-pointer hover:shadow-md transition-shadow"
+          onClick={handleLearningHoursClick}
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Hours of Learning</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent className="space-y-4">
-            {achievements.map((achievement) => (
-              <div 
-                key={achievement.id} 
-                className={`flex items-center gap-3 p-3 rounded-lg border ${
-                  achievement.earned ? 'bg-muted/50' : 'opacity-50'
-                }`}
-              >
-                <div className="text-2xl">{achievement.icon}</div>
-                <div className="flex-1">
-                  <h4 className="font-medium">{achievement.title}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {achievement.earned ? 'Earned' : 'In Progress'}
-                  </p>
-                </div>
-                {achievement.earned && (
-                  <Trophy className="h-5 w-5 text-yellow-600" />
-                )}
-              </div>
-            ))}
-            <Button variant="outline" className="w-full mt-4">
-              <Trophy className="h-4 w-4 mr-2" />
-              View All Achievements
-            </Button>
+          <CardContent>
+            <div className="text-2xl font-bold">{totalHours.toFixed(1)}</div>
+            <p className="text-xs text-muted-foreground">
+              Total hours completed
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className="cursor-pointer hover:shadow-md transition-shadow"
+          onClick={handleAchievementsClick}
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Achievements</CardTitle>
+            <Trophy className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">3</div>
+            <p className="text-xs text-muted-foreground">
+              Badges earned
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Progress</CardTitle>
+            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">85%</div>
+            <p className="text-xs text-muted-foreground">
+              Overall completion
+            </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Learning Streak */}
+      {/* Learning Hours Breakdown */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            Learning Streak
+            <Clock className="h-5 w-5" />
+            Learning Hours Breakdown
           </CardTitle>
-          <CardDescription>Keep up the momentum!</CardDescription>
+          <CardDescription>Your learning time across different activities</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-3xl font-bold">7 Days</p>
-              <p className="text-sm text-muted-foreground">Current streak</p>
-            </div>
-            <div className="text-4xl">🔥</div>
-          </div>
-          <div className="mt-4 grid grid-cols-7 gap-2">
-            {Array.from({ length: 7 }, (_, i) => (
-              <div 
-                key={i} 
-                className="h-8 w-8 rounded bg-primary/20 flex items-center justify-center text-xs font-medium"
-              >
-                ✓
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-blue-600" />
+                <span className="font-medium">ILT Hours</span>
               </div>
-            ))}
+              <span className="text-lg font-bold text-blue-600">{iltHours.toFixed(1)}</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <div className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-green-600" />
+                <span className="font-medium">E-Learning</span>
+              </div>
+              <span className="text-lg font-bold text-green-600">{elearningHours.toFixed(1)}</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+              <div className="flex items-center gap-2">
+                <Target className="h-4 w-4 text-orange-600" />
+                <span className="font-medium">Peer-to-Peer</span>
+              </div>
+              <span className="text-lg font-bold text-orange-600">{peerToPeerHours.toFixed(1)}</span>
+            </div>
           </div>
         </CardContent>
       </Card>
+
+      {/* Continue Learning */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Play className="h-5 w-5" />
+            Continue Learning
+          </CardTitle>
+          <CardDescription>Pick up where you left off</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {enrolledPrograms.length > 0 ? (
+            <>
+              {enrolledPrograms.slice(0, 3).map((enrollment) => (
+                <div key={enrollment.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="text-2xl">{enrollment.programs?.icon || '📚'}</div>
+                    <div>
+                      <h4 className="font-medium">{enrollment.programs?.title}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        {enrollment.programs?.level} • {enrollment.programs?.theme}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={enrollment.status === 'in-progress' ? 'default' : 'secondary'}>
+                      {enrollment.status}
+                    </Badge>
+                    <Button size="sm" onClick={handleContinueLearningClick}>
+                      Continue
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={handleContinueLearningClick}
+              >
+                View All Programs
+              </Button>
+            </>
+          ) : (
+            <div className="text-center py-8">
+              <GraduationCap className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="font-medium mb-2">No active courses</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Start your learning journey by exploring available programs
+              </p>
+              <Button onClick={handleContinueLearningClick}>
+                Explore Programs
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Upcoming Sessions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div>
+                  <h4 className="font-medium">GXP Compliance Training</h4>
+                  <p className="text-sm text-muted-foreground">Feb 01, 2025</p>
+                </div>
+                <Badge>Confirmed</Badge>
+              </div>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => navigate('/calendar')}
+              >
+                View Calendar
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="h-5 w-5" />
+              Recent Achievements
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-3 border rounded-lg">
+                <div className="text-2xl">🏆</div>
+                <div>
+                  <h4 className="font-medium">First Course Complete</h4>
+                  <p className="text-sm text-muted-foreground">Completed your first training</p>
+                </div>
+              </div>
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={handleAchievementsClick}
+              >
+                View All Achievements
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

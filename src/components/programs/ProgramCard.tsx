@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, MapPin, User, Clock, FileText, Eye, EyeOff, Mail, CalendarDays } from "lucide-react";
 import DatePickerDialog from "./DatePickerDialog";
+import { handleCannotAttendRequest, handleDateChangeRequest } from "./RequestHandler";
 
 interface Program {
   id: number;
@@ -32,9 +33,9 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
 
   const getLevelColor = (level: string) => {
     switch (level) {
-      case 'Basic': return 'bg-corporate-green text-corporate-green';
-      case 'Intermediate': return 'bg-corporate-blue text-corporate-blue';
-      case 'Advanced': return 'bg-corporate-orange text-corporate-orange';
+      case 'Basic': return 'bg-green-100 text-green-800';
+      case 'Intermediate': return 'bg-blue-100 text-blue-800';
+      case 'Advanced': return 'bg-orange-100 text-orange-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -45,17 +46,15 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
   };
 
   const handleCannotAttend = () => {
-    console.log(`Cannot attend ${program.title} - triggering email to superior`);
-    // Here you would trigger email to superior
+    handleCannotAttendRequest(program.id.toString(), program.title);
   };
 
   const handleRequestDateChange = () => {
     setShowDatePicker(true);
   };
 
-  const handleDateChangeRequest = (selectedDate: Date) => {
-    console.log(`Requesting date change to ${selectedDate} for ${program.title}`);
-    // Here you would send the request to Training Manager
+  const handleDateChangeRequestSubmit = (selectedDate: Date) => {
+    handleDateChangeRequest(program.id.toString(), program.title, selectedDate);
     setShowDatePicker(false);
   };
 
@@ -102,19 +101,19 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
 
           <div className="grid grid-cols-1 gap-3 text-sm">
             <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-corporate-blue" />
+              <Calendar className="h-4 w-4 text-blue-600" />
               <span className="font-medium">Dates:</span>
               <span className="text-muted-foreground">{program.dates}</span>
             </div>
             
             <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-corporate-green" />
+              <MapPin className="h-4 w-4 text-green-600" />
               <span className="font-medium">Venue:</span>
               <span className="text-muted-foreground">{program.venue}</span>
             </div>
             
             <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-corporate-orange" />
+              <User className="h-4 w-4 text-orange-600" />
               <span className="font-medium">Faculty:</span>
               <span className="text-muted-foreground">{program.faculty}</span>
             </div>
@@ -166,7 +165,7 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
       <DatePickerDialog
         isOpen={showDatePicker}
         onClose={() => setShowDatePicker(false)}
-        onDateSelect={handleDateChangeRequest}
+        onDateSelect={handleDateChangeRequestSubmit}
         programTitle={program.title}
       />
     </>

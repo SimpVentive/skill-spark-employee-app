@@ -17,6 +17,7 @@ const DatePickerDialog = ({ isOpen, onClose, onDateSelect, programTitle }: DateP
   const handleConfirm = () => {
     if (selectedDate) {
       onDateSelect(selectedDate);
+      setSelectedDate(undefined);
     }
   };
 
@@ -27,31 +28,35 @@ const DatePickerDialog = ({ isOpen, onClose, onDateSelect, programTitle }: DateP
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Request Date Change</DialogTitle>
           <DialogDescription>
-            Select your preferred alternative date for "{programTitle}"
+            Select your preferred date for: <strong>{programTitle}</strong>
           </DialogDescription>
         </DialogHeader>
         
-        <div className="flex justify-center py-4">
+        <div className="flex flex-col items-center space-y-4">
           <Calendar
             mode="single"
             selected={selectedDate}
             onSelect={setSelectedDate}
-            className="rounded-md border"
             disabled={(date) => date < new Date()}
+            className="rounded-md border"
           />
-        </div>
-        
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button onClick={handleConfirm} disabled={!selectedDate}>
-            Request Change
-          </Button>
+          
+          <div className="flex gap-2 w-full">
+            <Button variant="outline" onClick={handleCancel} className="flex-1">
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleConfirm} 
+              disabled={!selectedDate}
+              className="flex-1"
+            >
+              Request Change
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

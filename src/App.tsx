@@ -11,7 +11,7 @@ import Dashboard from '@/pages/Dashboard';
 import Calendar from '@/pages/Calendar';
 import Achievements from '@/pages/Achievements'; 
 import Analytics from '@/pages/Analytics';
-import CourseCatalog from '@/pages/CourseCatalog';
+import Programs from '@/pages/Programs';
 import Integrations from '@/pages/Integrations';
 import NotificationSettings from '@/components/notifications/NotificationSettings';
 import NotFound from '@/pages/NotFound';
@@ -29,7 +29,7 @@ function App() {
             <Route path="/" element={<AppLayout />}>
               <Route index element={<Index />} />
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="catalog" element={<CourseCatalog />} />
+              <Route path="programs" element={<Programs />} />
               <Route path="calendar" element={<Calendar />} />
               <Route path="achievements" element={<Achievements />} />
               <Route path="analytics" element={<Analytics />} />

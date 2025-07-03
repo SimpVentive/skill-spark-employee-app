@@ -11,6 +11,11 @@ import CollaborativeLearning from '@/components/collaboration/CollaborativeLearn
 import GoogleAnalytics from '@/components/integrations/GoogleAnalytics';
 import OpenAIIntegration from '@/components/integrations/OpenAIIntegration';
 import LinkedInLearning from '@/components/integrations/LinkedInLearning';
+import SCORMIntegration from '@/components/elearning/SCORMIntegration';
+import XAPIIntegration from '@/components/elearning/XAPIIntegration';
+import CMI5Integration from '@/components/elearning/CMI5Integration';
+import H5PIntegration from '@/components/elearning/H5PIntegration';
+import VideoAPIIntegration from '@/components/elearning/VideoAPIIntegration';
 import { 
   Shield, 
   Award, 
@@ -21,7 +26,11 @@ import {
   Users,
   BarChart3,
   Bot,
-  Linkedin
+  Linkedin,
+  BookOpen,
+  Activity,
+  Puzzle,
+  Youtube
 } from 'lucide-react';
 
 const Integrations = () => {
@@ -31,12 +40,32 @@ const Integrations = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4">Platform Integrations</h1>
           <p className="text-lg text-muted-foreground">
-            Connect external services to enhance your learning platform
+            Connect external services and e-learning standards to enhance your learning platform
           </p>
         </div>
 
-        <Tabs defaultValue="analytics" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 lg:grid-cols-10">
+        <Tabs defaultValue="scorm" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-15">
+            <TabsTrigger value="scorm" className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">SCORM</span>
+            </TabsTrigger>
+            <TabsTrigger value="xapi" className="flex items-center gap-2">
+              <Activity className="h-4 w-4" />
+              <span className="hidden sm:inline">xAPI</span>
+            </TabsTrigger>
+            <TabsTrigger value="cmi5" className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">cmi5</span>
+            </TabsTrigger>
+            <TabsTrigger value="h5p" className="flex items-center gap-2">
+              <Puzzle className="h-4 w-4" />
+              <span className="hidden sm:inline">H5P</span>
+            </TabsTrigger>
+            <TabsTrigger value="video-api" className="flex items-center gap-2">
+              <Youtube className="h-4 w-4" />
+              <span className="hidden sm:inline">Video APIs</span>
+            </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               <span className="hidden sm:inline">Analytics</span>
@@ -79,6 +108,26 @@ const Integrations = () => {
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="scorm" className="mt-6">
+            <SCORMIntegration />
+          </TabsContent>
+
+          <TabsContent value="xapi" className="mt-6">
+            <XAPIIntegration />
+          </TabsContent>
+
+          <TabsContent value="cmi5" className="mt-6">
+            <CMI5Integration />
+          </TabsContent>
+
+          <TabsContent value="h5p" className="mt-6">
+            <H5PIntegration />
+          </TabsContent>
+
+          <TabsContent value="video-api" className="mt-6">
+            <VideoAPIIntegration />
+          </TabsContent>
+
           <TabsContent value="analytics" className="mt-6">
             <div className="grid gap-6">
               <GoogleAnalytics />
@@ -89,11 +138,11 @@ const Integrations = () => {
                   <p className="text-gray-600">Advanced event tracking and user analytics</p>
                   <p className="text-sm text-gray-500 mt-2">Coming soon...</p>
                 </div>
-                {/* Placeholder for xAPI */}
+                {/* Enhanced xAPI Analytics */}
                 <div className="p-6 border-2 border-dashed border-gray-300 rounded-lg text-center">
-                  <h3 className="text-lg font-semibold mb-2">xAPI/TinCan Integration</h3>
-                  <p className="text-gray-600">Standardized learning activity data</p>
-                  <p className="text-sm text-gray-500 mt-2">Coming soon...</p>
+                  <h3 className="text-lg font-semibold mb-2">Learning Analytics Dashboard</h3>
+                  <p className="text-gray-600">Comprehensive learning data visualization from xAPI statements</p>
+                  <p className="text-sm text-gray-500 mt-2">Integrated with xAPI tab above</p>
                 </div>
               </div>
             </div>

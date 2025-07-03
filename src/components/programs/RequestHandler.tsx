@@ -4,9 +4,16 @@ import { toast } from "sonner";
 
 export const handleCannotAttendRequest = async (programId: string, programTitle: string) => {
   try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("Please log in to make requests");
+      return;
+    }
+
     const { error } = await supabase
       .from('user_requests')
       .insert({
+        user_id: user.id,
         request_type: 'cannot_attend',
         program_id: programId,
         message: `User cannot attend ${programTitle} and requests to notify superior`
@@ -27,9 +34,16 @@ export const handleCannotAttendRequest = async (programId: string, programTitle:
 
 export const handleDateChangeRequest = async (programId: string, programTitle: string, requestedDate: Date) => {
   try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("Please log in to make requests");
+      return;
+    }
+
     const { error } = await supabase
       .from('user_requests')
       .insert({
+        user_id: user.id,
         request_type: 'date_change',
         program_id: programId,
         requested_date: requestedDate.toISOString().split('T')[0],
@@ -51,9 +65,16 @@ export const handleDateChangeRequest = async (programId: string, programTitle: s
 
 export const handleEnrollmentRequest = async (programId: string, programTitle: string) => {
   try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("Please log in to make requests");
+      return;
+    }
+
     const { error } = await supabase
       .from('user_requests')
       .insert({
+        user_id: user.id,
         request_type: 'enrollment',
         program_id: programId,
         message: `User requests enrollment in ${programTitle}`

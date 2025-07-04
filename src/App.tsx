@@ -13,6 +13,8 @@ import Achievements from '@/pages/Achievements';
 import Analytics from '@/pages/Analytics';
 import Programs from '@/pages/Programs';
 import Integrations from '@/pages/Integrations';
+import Library from '@/pages/Library';
+import Assessments from '@/pages/Assessments';
 import NotificationSettings from '@/components/notifications/NotificationSettings';
 import NotFound from '@/pages/NotFound';
 
@@ -34,6 +36,8 @@ function App() {
               <Route path="achievements" element={<Achievements />} />
               <Route path="analytics" element={<Analytics />} />
               <Route path="integrations" element={<Integrations />} />
+              <Route path="library" element={<Library />} />
+              <Route path="assessments" element={<Assessments />} />
               <Route path="notifications" element={
                 <div className="container mx-auto px-4 py-8">
                   <NotificationSettings />

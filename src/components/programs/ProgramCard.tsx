@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, MapPin, User, Clock, FileText, Eye, EyeOff, Mail, CalendarDays } from "lucide-react";
 import DatePickerDialog from "./DatePickerDialog";
+import ProgramDetailsDialog from "./ProgramDetailsDialog";
 import { handleCannotAttendRequest, handleDateChangeRequest } from "./RequestHandler";
+import { toast } from "sonner";
 
 interface Program {
   id: number;
@@ -25,11 +27,13 @@ interface Program {
 
 interface ProgramCardProps {
   program: Program;
+  isPastProgram?: boolean;
 }
 
-const ProgramCard = ({ program }: ProgramCardProps) => {
+const ProgramCard = ({ program, isPastProgram = false }: ProgramCardProps) => {
   const [showFullOutline, setShowFullOutline] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -41,8 +45,9 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
   };
 
   const handleConfirmAttendance = () => {
-    console.log(`Confirmed attendance for ${program.title}`);
-    // Here you would typically make an API call
+    toast.success("Attendance confirmed", {
+      description: "You have successfully confirmed your attendance for this program."
+    });
   };
 
   const handleCannotAttend = () => {
@@ -56,6 +61,10 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
   const handleDateChangeRequestSubmit = (selectedDate: Date) => {
     handleDateChangeRequest(program.id.toString(), program.title, selectedDate);
     setShowDatePicker(false);
+  };
+
+  const handleViewDetails = () => {
+    setShowDetails(true);
   };
 
   return (
@@ -133,30 +142,42 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
 
           <div className="flex flex-wrap gap-2 pt-4 border-t">
             <Button 
-              onClick={handleConfirmAttendance}
+              onClick={handleViewDetails}
+              variant="outline"
               className="flex-1 min-w-[120px]"
             >
-              Confirm Attendance
+              View Details
             </Button>
-            
-            <Button 
-              variant="outline" 
-              onClick={handleCannotAttend}
-              className="flex-1 min-w-[120px]"
-            >
-              <Mail className="h-4 w-4 mr-1" />
-              Cannot Attend
-            </Button>
-            
-            {program.multipleBatches && (
-              <Button 
-                variant="secondary" 
-                onClick={handleRequestDateChange}
-                className="flex-1 min-w-[140px]"
-              >
-                <CalendarDays className="h-4 w-4 mr-1" />
-                Request Date Change
-              </Button>
+
+            {!isPastProgram && (
+              <>
+                <Button 
+                  onClick={handleConfirmAttendance}
+                  className="flex-1 min-w-[120px]"
+                >
+                  Confirm Attendance
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  onClick={handleCannotAttend}
+                  className="flex-1 min-w-[120px]"
+                >
+                  <Mail className="h-4 w-4 mr-1" />
+                  Cannot Attend
+                </Button>
+                
+                {program.multipleBatches && (
+                  <Button 
+                    variant="secondary" 
+                    onClick={handleRequestDateChange}
+                    className="flex-1 min-w-[140px]"
+                  >
+                    <CalendarDays className="h-4 w-4 mr-1" />
+                    Request Date Change
+                  </Button>
+                )}
+              </>
             )}
           </div>
         </CardContent>
@@ -167,6 +188,13 @@ const ProgramCard = ({ program }: ProgramCardProps) => {
         onClose={() => setShowDatePicker(false)}
         onDateSelect={handleDateChangeRequestSubmit}
         programTitle={program.title}
+      />
+
+      <ProgramDetailsDialog
+        program={program}
+        isOpen={showDetails}
+        onClose={() => setShowDetails(false)}
+        isPastProgram={isPastProgram}
       />
     </>
   );

@@ -1,368 +1,264 @@
-import { useState } from "react";
+
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  FileText, 
-  Clock, 
-  CheckCircle, 
-  AlertTriangle, 
-  Trophy,
-  Play,
-  Calendar,
-  Target
-} from "lucide-react";
+import { FileText, Clock, Trophy, TrendingUp, PlayCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 const Assessments = () => {
-  const { data: assessments = [], isLoading } = useQuery({
-    queryKey: ['assessments'],
+  // Fetch user's assessment attempts
+  const { data: assessmentAttempts = [] } = useQuery({
+    queryKey: ['user-assessment-attempts'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('assessments')
+        .from('user_assessment_attempts')
         .select(`
           *,
-          programs (title),
-          user_assessment_attempts (
-            attempt_number,
-            score,
-            status,
-            completed_at
-          )
-        `);
+          assessments (*)
+        `)
+        .order('created_at', { ascending: false });
       
       if (error) throw error;
       return data || [];
     }
   });
 
-  if (isLoading) {
-    return <div className="flex justify-center p-8">Loading assessments...</div>;
-  }
-
-  // Transform the data to match the existing component structure
-  const transformedAssessments = assessments.map(assessment => {
-    const latestAttempt = assessment.user_assessment_attempts?.[0];
-    
-    return {
-      id: assessment.id,
-      title: assessment.title,
-      type: assessment.assessment_type,
-      course: assessment.programs?.title || 'Unknown Course',
-      status: latestAttempt?.status === 'completed' ? 'Completed' : 
-              latestAttempt?.status === 'failed' ? 'Failed' :
-              latestAttempt?.status === 'in_progress' ? 'In Progress' : 'Pending',
-      score: latestAttempt?.score || null,
-      passingScore: assessment.passing_score,
-      timeLimit: assessment.time_limit_minutes ? `${assessment.time_limit_minutes} minutes` : 'No limit',
-      attempts: assessment.user_assessment_attempts?.length || 0,
-      maxAttempts: assessment.max_attempts || 3,
-      dueDate: assessment.due_date || 'No due date',
-      completedDate: latestAttempt?.completed_at || null
-    };
-  });
-
-  const upcomingAssessments = transformedAssessments.filter(a => a.status === "Pending" || a.status === "In Progress");
-  const completedAssessments = transformedAssessments.filter(a => a.status === "Completed" || a.status === "Failed");
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "Completed":
-        return <CheckCircle className="h-5 w-5 text-green-600" />;
-      case "Failed":
-        return <AlertTriangle className="h-5 w-5 text-red-600" />;
-      case "In Progress":
-        return <Clock className="h-5 w-5 text-blue-600" />;
-      default:
-        return <FileText className="h-5 w-5 text-muted-foreground" />;
-    }
+  // Mock data for comprehensive assessment overview
+  const assessmentStats = {
+    totalCompleted: 8,
+    averageScore: 85,
+    pendingAssessments: 3,
+    improvementRate: 12
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Completed":
-        return "bg-green-100 text-green-800";
-      case "Failed":
-        return "bg-red-100 text-red-800";
-      case "In Progress":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+  const programWiseAssessments = [
+    {
+      programId: "1",
+      programTitle: "GXP Compliance Training",
+      programIcon: "📋",
+      entryTest: { score: 78, status: "completed", date: "2024-12-01" },
+      exitTest: { score: 92, status: "completed", date: "2024-12-15" },
+      averageScore: 85,
+      participantCount: 25
+    },
+    {
+      programId: "2",
+      programTitle: "Leadership Development",
+      programIcon: "👑",
+      entryTest: { score: 82, status: "completed", date: "2024-11-15" },
+      exitTest: { score: 88, status: "completed", date: "2024-12-10" },
+      averageScore: 81,
+      participantCount: 18
+    },
+    {
+      programId: "3",
+      programTitle: "Project Management Fundamentals",
+      programIcon: "📊",
+      entryTest: { score: 75, status: "completed", date: "2024-11-01" },
+      exitTest: { score: null, status: "pending", date: null },
+      averageScore: 79,
+      participantCount: 22
     }
+  ];
+
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return "text-green-600";
+    if (score >= 80) return "text-blue-600";
+    if (score >= 70) return "text-orange-600";
+    return "text-red-600";
   };
 
-  // Calculate summary stats
-  const totalAssessments = transformedAssessments.length;
-  const completedCount = transformedAssessments.filter(a => a.status === "Completed").length;
-  const pendingCount = transformedAssessments.filter(a => a.status === "Pending" || a.status === "In Progress").length;
-  const averageScore = completedAssessments.length > 0 
-    ? Math.round(completedAssessments.reduce((sum, a) => sum + (a.score || 0), 0) / completedAssessments.length)
-    : 0;
+  const getScoreBadgeVariant = (score: number) => {
+    if (score >= 90) return "default";
+    if (score >= 80) return "secondary";
+    if (score >= 70) return "outline";
+    return "destructive";
+  };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Assessments</h1>
-        <p className="text-muted-foreground">Track your progress and test your knowledge</p>
-      </div>
+    <ProtectedRoute>
+      <div className="space-y-6 p-4 sm:p-6">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold">Assessments</h1>
+          <p className="text-muted-foreground mt-1">
+            Track your assessment performance and progress
+          </p>
+        </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="flex items-center p-6">
-            <Target className="h-8 w-8 text-blue-600" />
-            <div className="ml-4">
-              <p className="text-2xl font-bold">{totalAssessments}</p>
-              <p className="text-sm text-muted-foreground">Total Assessments</p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="flex items-center p-6">
-            <CheckCircle className="h-8 w-8 text-green-600" />
-            <div className="ml-4">
-              <p className="text-2xl font-bold">{completedCount}</p>
-              <p className="text-sm text-muted-foreground">Completed</p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="flex items-center p-6">
-            <Clock className="h-8 w-8 text-yellow-600" />
-            <div className="ml-4">
-              <p className="text-2xl font-bold">{pendingCount}</p>
-              <p className="text-sm text-muted-foreground">Pending</p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="flex items-center p-6">
-            <Trophy className="h-8 w-8 text-purple-600" />
-            <div className="ml-4">
-              <p className="text-2xl font-bold">{averageScore}%</p>
-              <p className="text-sm text-muted-foreground">Average Score</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Assessment Overview Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Completed</CardTitle>
+              <Trophy className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{assessmentStats.totalCompleted}</div>
+              <p className="text-xs text-muted-foreground">Total assessments</p>
+            </CardContent>
+          </Card>
 
-      <Tabs defaultValue="upcoming" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-          <TabsTrigger value="completed">Completed</TabsTrigger>
-          <TabsTrigger value="all">All Assessments</TabsTrigger>
-        </TabsList>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Average Score</CardTitle>
+              <TrendingUp className="h-4 w-4 text-blue-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{assessmentStats.averageScore}%</div>
+              <p className="text-xs text-muted-foreground">Overall performance</p>
+            </CardContent>
+          </Card>
 
-        <TabsContent value="upcoming" className="space-y-4">
-          <div className="grid gap-4">
-            {upcomingAssessments.length === 0 ? (
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <p className="text-muted-foreground">No upcoming assessments</p>
-                </CardContent>
-              </Card>
-            ) : (
-              upcomingAssessments.map((assessment) => (
-                <Card key={assessment.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-3 flex-1">
-                        <div className="flex items-start gap-3">
-                          {getStatusIcon(assessment.status)}
-                          <div>
-                            <h4 className="font-semibold">{assessment.title}</h4>
-                            <p className="text-sm text-muted-foreground">{assessment.course}</p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <FileText className="h-4 w-4" />
-                            {assessment.type}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
-                            {assessment.timeLimit}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Calendar className="h-4 w-4" />
-                            Due: {assessment.dueDate}
-                          </div>
-                        </div>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Pending</CardTitle>
+              <Clock className="h-4 w-4 text-orange-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{assessmentStats.pendingAssessments}</div>
+              <p className="text-xs text-muted-foreground">Awaiting completion</p>
+            </CardContent>
+          </Card>
 
-                        <div className="flex items-center gap-4">
-                          <Badge className={getStatusColor(assessment.status)}>
-                            {assessment.status}
-                          </Badge>
-                          <span className="text-sm text-muted-foreground">
-                            Attempts: {assessment.attempts}/{assessment.maxAttempts}
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            Passing Score: {assessment.passingScore}%
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <Button>
-                        <Play className="h-4 w-4 mr-2" />
-                        {assessment.status === "In Progress" ? "Continue" : "Start"}
-                      </Button>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Improvement</CardTitle>
+              <TrendingUp className="h-4 w-4 text-purple-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">+{assessmentStats.improvementRate}%</div>
+              <p className="text-xs text-muted-foreground">Score improvement</p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Program-wise Assessments */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Program-wise Assessment Performance</h2>
+          <div className="space-y-4">
+            {programWiseAssessments.map((program) => (
+              <Card key={program.programId}>
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="text-3xl">{program.programIcon}</div>
+                    <div className="flex-1">
+                      <CardTitle className="text-lg">{program.programTitle}</CardTitle>
+                      <CardDescription>
+                        {program.participantCount} participants • Average: {program.averageScore}%
+                      </CardDescription>
                     </div>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="completed" className="space-y-4">
-          <div className="grid gap-4">
-            {completedAssessments.length === 0 ? (
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <p className="text-muted-foreground">No completed assessments</p>
-                </CardContent>
-              </Card>
-            ) : (
-              completedAssessments.map((assessment) => (
-                <Card key={assessment.id}>
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-3 flex-1">
-                        <div className="flex items-start gap-3">
-                          {getStatusIcon(assessment.status)}
-                          <div>
-                            <h4 className="font-semibold">{assessment.title}</h4>
-                            <p className="text-sm text-muted-foreground">{assessment.course}</p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <FileText className="h-4 w-4" />
-                            {assessment.type}
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Calendar className="h-4 w-4" />
-                            Completed: {assessment.completedDate}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                          <Badge className={getStatusColor(assessment.status)}>
-                            {assessment.status}
-                          </Badge>
-                          {assessment.score && (
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium">Score:</span>
-                              <span className={`text-sm font-bold ${
-                                assessment.score >= assessment.passingScore ? "text-green-600" : "text-red-600"
-                              }`}>
-                                {assessment.score}%
-                              </span>
-                            </div>
-                          )}
-                          <span className="text-sm text-muted-foreground">
-                            Attempts: {assessment.attempts}/{assessment.maxAttempts}
-                          </span>
-                        </div>
-
-                        {assessment.score && (
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                              <span>Performance</span>
-                              <span>{assessment.score}% (Passing: {assessment.passingScore}%)</span>
-                            </div>
-                            <Progress 
-                              value={(assessment.score / 100) * 100} 
-                              className="h-2"
-                            />
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
-                          View Results
-                        </Button>
-                        {assessment.status === "Failed" && assessment.attempts < assessment.maxAttempts && (
-                          <Button size="sm">
-                            Retake
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="all" className="space-y-4">
-          <div className="grid gap-4">
-            {transformedAssessments.map((assessment) => (
-              <Card key={assessment.id}>
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-3 flex-1">
-                      <div className="flex items-start gap-3">
-                        {getStatusIcon(assessment.status)}
-                        <div>
-                          <h4 className="font-semibold">{assessment.title}</h4>
-                          <p className="text-sm text-muted-foreground">{assessment.course}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <FileText className="h-4 w-4" />
-                          {assessment.type}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          {assessment.timeLimit}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          Due: {assessment.dueDate}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-4">
-                        <Badge className={getStatusColor(assessment.status)}>
-                          {assessment.status}
-                        </Badge>
-                        {assessment.score && (
-                          <span className={`text-sm font-bold ${
-                            assessment.score >= assessment.passingScore ? "text-green-600" : "text-red-600"
-                          }`}>
-                            Score: {assessment.score}%
-                          </span>
-                        )}
-                        <span className="text-sm text-muted-foreground">
-                          Attempts: {assessment.attempts}/{assessment.maxAttempts}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <Button variant="outline">
-                      View Details
-                    </Button>
                   </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Entry Test */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium">Entry Test</h4>
+                        {program.entryTest.status === "completed" && (
+                          <Badge variant={getScoreBadgeVariant(program.entryTest.score)}>
+                            {program.entryTest.score}%
+                          </Badge>
+                        )}
+                      </div>
+                      {program.entryTest.status === "completed" ? (
+                        <div className="space-y-1">
+                          <Progress value={program.entryTest.score} className="h-2" />
+                          <p className="text-xs text-muted-foreground">
+                            Completed on {program.entryTest.date}
+                          </p>
+                        </div>
+                      ) : (
+                        <Button size="sm" variant="outline">
+                          <PlayCircle className="h-4 w-4 mr-1" />
+                          Start Test
+                        </Button>
+                      )}
+                    </div>
+
+                    {/* Exit Test */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-medium">Exit Test</h4>
+                        {program.exitTest.status === "completed" && program.exitTest.score && (
+                          <Badge variant={getScoreBadgeVariant(program.exitTest.score)}>
+                            {program.exitTest.score}%
+                          </Badge>
+                        )}
+                      </div>
+                      {program.exitTest.status === "completed" && program.exitTest.score ? (
+                        <div className="space-y-1">
+                          <Progress value={program.exitTest.score} className="h-2" />
+                          <p className="text-xs text-muted-foreground">
+                            Completed on {program.exitTest.date}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-1">
+                          <Badge variant="outline">Pending</Badge>
+                          <p className="text-xs text-muted-foreground">
+                            Available after program completion
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Improvement Indicator */}
+                  {program.entryTest.status === "completed" && 
+                   program.exitTest.status === "completed" && 
+                   program.exitTest.score && (
+                    <div className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
+                      <TrendingUp className="h-4 w-4 text-green-600" />
+                      <span className="text-sm">
+                        Improvement: +{program.exitTest.score - program.entryTest.score} points
+                      </span>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
           </div>
-        </TabsContent>
-      </Tabs>
-    </div>
+        </div>
+
+        {/* Recent Assessment Attempts */}
+        {assessmentAttempts.length > 0 && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Recent Assessment Attempts</h2>
+            <div className="space-y-3">
+              {assessmentAttempts.slice(0, 5).map((attempt) => (
+                <Card key={attempt.id}>
+                  <CardContent className="flex items-center justify-between p-4">
+                    <div className="flex items-center gap-3">
+                      <FileText className="h-5 w-5 text-blue-600" />
+                      <div>
+                        <h4 className="font-medium">{attempt.assessments?.title}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          Attempt #{attempt.attempt_number} • {new Date(attempt.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {attempt.score && (
+                        <Badge variant={getScoreBadgeVariant(attempt.score)}>
+                          {attempt.score}%
+                        </Badge>
+                      )}
+                      <Badge variant={attempt.status === 'completed' ? 'default' : 'secondary'}>
+                        {attempt.status}
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </ProtectedRoute>
   );
 };
 

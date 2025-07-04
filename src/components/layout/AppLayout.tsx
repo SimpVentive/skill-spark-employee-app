@@ -18,10 +18,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
-  { name: 'Course Catalog', href: '/catalog', icon: BookOpen },
+  { name: 'LXP Hub', href: '/lxp', icon: BookOpen },
+  { name: 'Programs', href: '/programs', icon: BookOpen },
   { name: 'Calendar', href: '/calendar', icon: Calendar },
   { name: 'Achievements', href: '/achievements', icon: Trophy },
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+  { name: 'Library', href: '/library', icon: BookOpen },
+  { name: 'Assessments', href: '/assessments', icon: Settings },
   { name: 'Integrations', href: '/integrations', icon: Settings },
 ];
 

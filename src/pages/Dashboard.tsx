@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -99,6 +98,10 @@ const Dashboard = () => {
 
   const handleAchievementsClick = () => {
     navigate('/achievements');
+  };
+
+  const handleLXPHubClick = () => {
+    navigate('/lxp');
   };
 
   return (
@@ -244,6 +247,23 @@ const Dashboard = () => {
             <div className="text-2xl font-bold">{dashboardStats.p2pLearning.groups}</div>
             <p className="text-xs text-muted-foreground">
               Groups, {dashboardStats.p2pLearning.forums} forums active
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* LXP Hub Access */}
+        <Card 
+          className="cursor-pointer hover:shadow-md transition-shadow bg-gradient-to-br from-purple-500 to-pink-500 text-white"
+          onClick={handleLXPHubClick}
+        >
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">LXP Hub</CardTitle>
+            <Brain className="h-5 w-5 text-purple-200" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">New!</div>
+            <p className="text-xs text-purple-100">
+              AI-powered personalized learning experience
             </p>
           </CardContent>
         </Card>

@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/sonner';
@@ -17,6 +16,7 @@ import Library from '@/pages/Library';
 import Assessments from '@/pages/Assessments';
 import NotificationSettings from '@/components/notifications/NotificationSettings';
 import NotFound from '@/pages/NotFound';
+import LXPHub from '@/pages/LXPHub';
 
 const queryClient = new QueryClient();
 
@@ -31,6 +31,7 @@ function App() {
             <Route path="/" element={<AppLayout />}>
               <Route index element={<Index />} />
               <Route path="dashboard" element={<Dashboard />} />
+              <Route path="lxp" element={<LXPHub />} />
               <Route path="programs" element={<Programs />} />
               <Route path="calendar" element={<Calendar />} />
               <Route path="achievements" element={<Achievements />} />

@@ -17,6 +17,12 @@ import Assessments from '@/pages/Assessments';
 import NotificationSettings from '@/components/notifications/NotificationSettings';
 import NotFound from '@/pages/NotFound';
 import LXPHub from '@/pages/LXPHub';
+import CourseCatalog from '@/pages/CourseCatalog';
+import LearningPaths from '@/pages/LearningPaths';
+import OfflineContent from '@/pages/OfflineContent';
+import Bookmarks from '@/pages/Bookmarks';
+import SocialLearning from '@/pages/SocialLearning';
+import Certifications from '@/pages/Certifications';
 
 const queryClient = new QueryClient();
 
@@ -31,14 +37,16 @@ function App() {
             <Route path="/" element={<AppLayout />}>
               <Route index element={<Index />} />
               <Route path="dashboard" element={<Dashboard />} />
-              <Route path="lxp" element={<LXPHub />} />
-              <Route path="programs" element={<Programs />} />
-              <Route path="calendar" element={<Calendar />} />
-              <Route path="achievements" element={<Achievements />} />
-              <Route path="analytics" element={<Analytics />} />
-              <Route path="integrations" element={<Integrations />} />
-              <Route path="library" element={<Library />} />
+              <Route path="course-catalog" element={<CourseCatalog />} />
+              <Route path="learning-paths" element={<LearningPaths />} />
               <Route path="assessments" element={<Assessments />} />
+              <Route path="calendar" element={<Calendar />} />
+              <Route path="offline-content" element={<OfflineContent />} />
+              <Route path="bookmarks" element={<Bookmarks />} />
+              <Route path="achievements" element={<Achievements />} />
+              <Route path="social-learning" element={<SocialLearning />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="certifications" element={<Certifications />} />
               <Route path="notifications" element={
                 <div className="container mx-auto px-4 py-8">
                   <NotificationSettings />

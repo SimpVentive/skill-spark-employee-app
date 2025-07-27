@@ -1,4 +1,5 @@
 
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -143,7 +144,8 @@ const Certifications = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <ProtectedRoute>
+      <div className="space-y-6 p-4 sm:p-6">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold">Certifications</h1>
         <p className="text-muted-foreground">Earn industry-recognized certifications to advance your career</p>
@@ -380,7 +382,8 @@ const Certifications = () => {
           </div>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 };
 

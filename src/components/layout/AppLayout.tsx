@@ -21,8 +21,20 @@ import {
   Award,
   Plug
 } from 'lucide-react';
-import { useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from '@/components/ui/sidebar';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
@@ -39,10 +51,61 @@ const navigation = [
   { name: 'Integrations', href: '/integrations', icon: Plug },
 ];
 
+function AppSidebar() {
+  const location = useLocation();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
+  return (
+    <Sidebar>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel>SkillSpark</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigation.map((item) => {
+                const isActive = location.pathname === item.href;
+                return (
+                  <SidebarMenuItem key={item.name}>
+                    <SidebarMenuButton asChild isActive={isActive}>
+                      <Link to={item.href}>
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.name}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Settings</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={location.pathname === '/notifications'}>
+                  <Link to="/notifications">
+                    <Bell className="h-4 w-4" />
+                    <span>Notifications</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
+}
+
 const AppLayout = () => {
   const { user, loading, signOut } = useAuth();
   const location = useLocation();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   console.log('AppLayout: Rendering with state', { 
     hasUser: !!user, 
@@ -51,39 +114,36 @@ const AppLayout = () => {
     pathname: location.pathname 
   });
 
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   // Show loading skeleton while auth is initializing
   if (loading) {
     console.log('AppLayout: Showing loading state');
     return (
-      <div className="min-h-screen bg-gray-50 flex">
-        {/* Loading Sidebar */}
-        <div className="w-64 bg-blue-700 shadow-lg">
-          <div className="p-4 border-b">
-            <Skeleton className="h-8 w-32" />
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full">
+          <div className="w-64 bg-sidebar shadow-lg">
+            <div className="p-4 border-b">
+              <Skeleton className="h-8 w-32" />
+            </div>
+            <div className="p-4 space-y-2">
+              {[...Array(6)].map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+              ))}
+            </div>
           </div>
-          <div className="p-4 space-y-2">
-            {[...Array(6)].map((_, i) => (
-              <Skeleton key={i} className="h-10 w-full" />
-            ))}
+          
+          <div className="flex-1">
+            <div className="h-16 bg-background border-b flex items-center px-6">
+              <Skeleton className="h-6 w-48" />
+            </div>
+            <div className="p-6">
+              <Skeleton className="h-8 w-64 mb-4" />
+              <Skeleton className="h-32 w-full mb-4" />
+              <Skeleton className="h-64 w-full" />
+            </div>
           </div>
         </div>
-        
-        {/* Loading Main Content */}
-        <div className="flex-1">
-          <div className="h-16 bg-white border-b flex items-center px-6">
-            <Skeleton className="h-6 w-48" />
-          </div>
-          <div className="p-6">
-            <Skeleton className="h-8 w-64 mb-4" />
-            <Skeleton className="h-32 w-full mb-4" />
-            <Skeleton className="h-64 w-full" />
-          </div>
-        </div>
-      </div>
+      </SidebarProvider>
     );
   }
 
@@ -96,73 +156,21 @@ const AppLayout = () => {
 
   console.log('AppLayout: Rendering authenticated layout');
 
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-blue-700 shadow-lg transition-all duration-300 flex-shrink-0`}>
-        {/* Sidebar Header */}
-        <div className="p-4 border-b border-blue-600 flex items-center justify-between">
-          {sidebarOpen && (
-            <Link to="/dashboard" className="flex items-center space-x-2">
-              <h1 className="text-xl font-bold text-white">SkillSpark</h1>
-            </Link>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 text-white hover:bg-blue-600"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-        </div>
-
-        {/* Navigation Links */}
-        <nav className="p-4">
-          <div className="space-y-2">
-            {navigation.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                    isActive 
-                      ? 'bg-blue-600 text-white font-medium' 
-                      : 'text-blue-100 hover:bg-blue-600 hover:text-white'
-                  }`}
-                >
-                  <item.icon className="h-5 w-5 flex-shrink-0" />
-                  {sidebarOpen && <span>{item.name}</span>}
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* Settings Section */}
-          <div className="mt-8 pt-4 border-t border-blue-600">
-            <Link
-              to="/notifications"
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                location.pathname === '/notifications'
-                  ? 'bg-blue-600 text-white font-medium'
-                  : 'text-blue-100 hover:bg-blue-600 hover:text-white'
-              }`}
-            >
-              <Bell className="h-5 w-5 flex-shrink-0" />
-              {sidebarOpen && <span>Notifications</span>}
-            </Link>
-          </div>
-        </nav>
-      </div>
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Top Header */}
-        <header className="bg-white shadow-sm border-b h-16 flex-shrink-0 px-6">
-          <div className="flex justify-between items-center h-full">
-            <div className="flex items-center">
-              <h2 className="text-lg font-semibold text-gray-900">
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        
+        <div className="flex-1 flex flex-col">
+          {/* Top Header */}
+          <header className="bg-background border-b h-16 flex-shrink-0 px-6 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger />
+              <h2 className="text-lg font-semibold">
                 Welcome back, {user.email}
               </h2>
             </div>
@@ -182,15 +190,15 @@ const AppLayout = () => {
                 Sign Out
               </Button>
             </div>
-          </div>
-        </header>
+          </header>
 
-        {/* Page Content */}
-        <main className="flex-1 p-6 overflow-auto">
-          <Outlet />
-        </main>
+          {/* Page Content */}
+          <main className="flex-1 p-6 overflow-auto">
+            <Outlet />
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 

@@ -3,8 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, Clock, BookOpen, Target, Award, Calendar, Users, Activity } from "lucide-react";
+import { TrendingUp, Clock, BookOpen, Target, Award, Calendar, Users, Activity, Play, Trophy, Zap, Settings, ExternalLink, CheckCircle, Users2 } from "lucide-react";
 
 const Analytics = () => {
   const weeklyData = [
@@ -49,77 +50,266 @@ const Analytics = () => {
     { title: 'Certifications', current: 3, target: 5, percentage: 60 }
   ];
 
+  const continueLearning = [
+    {
+      title: "React Development Fundamentals",
+      category: "Development",
+      progress: 75,
+      timeAgo: "2 hours ago",
+      type: "E-Learning Course"
+    },
+    {
+      title: "Digital Marketing Strategy",
+      category: "Marketing", 
+      progress: 45,
+      timeAgo: "1 day ago",
+      type: "E-Learning Course"
+    },
+    {
+      title: "Project Management Basics",
+      category: "Management",
+      progress: 90,
+      timeAgo: "3 days ago",
+      type: "Training Program"
+    },
+    {
+      title: "Advanced Leadership Development",
+      category: "TNA Based",
+      progress: 30,
+      timeAgo: "Tomorrow 10:00 AM",
+      type: "Training Program",
+      isUpcoming: true
+    },
+    {
+      title: "Compliance and Ethics Training",
+      category: "Compliance",
+      progress: 30,
+      timeAgo: "Tomorrow 2:00 PM", 
+      type: "Training Program",
+      isUpcoming: true
+    }
+  ];
+
+  const recentAchievements = [
+    {
+      title: "First Course Completed",
+      status: "Earned",
+      icon: Trophy,
+      color: "text-yellow-600"
+    },
+    {
+      title: "Week Streak", 
+      status: "Earned",
+      icon: Zap,
+      color: "text-orange-600"
+    },
+    {
+      title: "Social Learner",
+      status: "In Progress",
+      icon: Users2,
+      color: "text-blue-600"
+    },
+    {
+      title: "Assessment Master",
+      status: "Earned", 
+      icon: Target,
+      color: "text-purple-600"
+    }
+  ];
+
+  const integrationStats = [
+    {
+      name: "Google Analytics",
+      status: "Connected",
+      lastSync: "2 minutes ago",
+      icon: Activity,
+      color: "text-green-600"
+    },
+    {
+      name: "Zapier Automation",
+      status: "Active",
+      lastSync: "5 minutes ago", 
+      icon: Zap,
+      color: "text-orange-600"
+    },
+    {
+      name: "SCORM Packages",
+      status: "3 Active",
+      lastSync: "1 hour ago",
+      icon: BookOpen,
+      color: "text-blue-600"
+    },
+    {
+      name: "Calendar Sync",
+      status: "Synced",
+      lastSync: "30 minutes ago",
+      icon: Calendar,
+      color: "text-purple-600"
+    }
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold">Learning Analytics</h1>
-        <p className="text-muted-foreground">Track your progress and identify learning patterns</p>
+        <h1 className="text-3xl font-bold">Learning Dashboard</h1>
+        <p className="text-muted-foreground">Track your progress and continue your learning journey</p>
       </div>
 
+      {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Study Hours</CardTitle>
-            <Clock className="h-4 w-4 text-blue-600" />
+            <CardTitle className="text-sm font-medium">Courses Enrolled</CardTitle>
+            <BookOpen className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">127.5</div>
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <TrendingUp className="h-3 w-3 text-green-600" />
-              +12% from last month
-            </p>
+            <div className="text-2xl font-bold">12</div>
+            <p className="text-xs text-muted-foreground">Courses Enrolled</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Courses Completed</CardTitle>
-            <BookOpen className="h-4 w-4 text-green-600" />
+            <CardTitle className="text-sm font-medium">Achievements</CardTitle>
+            <Trophy className="h-5 w-5 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">18</div>
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <TrendingUp className="h-3 w-3 text-green-600" />
-              +3 this month
-            </p>
+            <div className="text-2xl font-bold">24</div>
+            <p className="text-xs text-muted-foreground">Achievements</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Score</CardTitle>
-            <Target className="h-4 w-4 text-purple-600" />
+            <CardTitle className="text-sm font-medium">Hours Learned</CardTitle>
+            <Clock className="h-5 w-5 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">87%</div>
-            <p className="text-xs text-muted-foreground flex items-center gap-1">
-              <TrendingUp className="h-3 w-3 text-green-600" />
-              +5% improvement
-            </p>
+            <div className="text-2xl font-bold">156</div>
+            <p className="text-xs text-muted-foreground">Hours Learned</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Current Streak</CardTitle>
-            <Activity className="h-4 w-4 text-orange-600" />
+            <CardTitle className="text-sm font-medium">Skills Mastered</CardTitle>
+            <Target className="h-5 w-5 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12 days</div>
-            <p className="text-xs text-muted-foreground">Keep it up!</p>
+            <div className="text-2xl font-bold">8</div>
+            <p className="text-xs text-muted-foreground">Skills Mastered</p>
           </CardContent>
         </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Continue Learning Section */}
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Play className="w-5 h-5 text-primary" />
+                <CardTitle>Continue Learning</CardTitle>
+              </div>
+              <CardDescription>Pick up where you left off</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-4">
+                <div className="text-sm font-medium text-muted-foreground">E-Learning Courses</div>
+                {continueLearning.filter(item => item.type === "E-Learning Course").map((course, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">{course.title}</div>
+                        <div className="text-sm text-muted-foreground flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">{course.category}</Badge>
+                          <span>•</span>
+                          <span>{course.timeAgo}</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium">{course.progress}% complete</div>
+                      </div>
+                    </div>
+                    <Progress value={course.progress} className="h-2" />
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-4 mt-6">
+                <div className="text-sm font-medium text-muted-foreground">Training Programs</div>
+                {continueLearning.filter(item => item.type === "Training Program").map((program, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium">{program.title}</div>
+                        <div className="text-sm text-muted-foreground flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs">{program.category}</Badge>
+                          <span>•</span>
+                          <span>{program.timeAgo}</span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium">{program.progress}% complete</div>
+                      </div>
+                    </div>
+                    <Progress value={program.progress} className="h-2" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Recent Achievements Section */}
+        <div>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Award className="w-5 h-5 text-primary" />
+                <CardTitle>Recent Achievements</CardTitle>
+              </div>
+              <CardDescription>Your learning milestones</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {recentAchievements.map((achievement, index) => {
+                const IconComponent = achievement.icon;
+                return (
+                  <div key={index} className="flex items-center gap-3">
+                    <div className={`p-2 rounded-full bg-muted ${achievement.color}`}>
+                      <IconComponent className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium">{achievement.title}</div>
+                      <div className="text-sm text-muted-foreground">{achievement.status}</div>
+                    </div>
+                    {achievement.status === "Earned" && (
+                      <Trophy className="w-4 h-4 text-yellow-600" />
+                    )}
+                  </div>
+                );
+              })}
+              <Button variant="outline" className="w-full mt-4" size="sm">
+                <ExternalLink className="w-4 h-4 mr-2" />
+                View All Achievements
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Analytics & Integrations Tabs */}
+      <Tabs defaultValue="analytics" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="integrations">Integrations</TabsTrigger>
           <TabsTrigger value="progress">Progress</TabsTrigger>
           <TabsTrigger value="skills">Skills</TabsTrigger>
           <TabsTrigger value="goals">Goals</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent value="analytics" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
@@ -165,6 +355,46 @@ const Analytics = () => {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="integrations" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Integration Status</CardTitle>
+              <CardDescription>Monitor your connected learning tools and services</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {integrationStats.map((integration, index) => {
+                  const IconComponent = integration.icon;
+                  return (
+                    <div key={index} className="flex items-center gap-3 p-4 border rounded-lg">
+                      <div className={`p-2 rounded-lg bg-muted ${integration.color}`}>
+                        <IconComponent className="w-5 h-5" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-medium">{integration.name}</div>
+                        <div className="text-sm text-muted-foreground">Last sync: {integration.lastSync}</div>
+                      </div>
+                      <Badge variant={integration.status.includes("Connected") || integration.status.includes("Active") || integration.status.includes("Synced") ? "default" : "secondary"}>
+                        {integration.status}
+                      </Badge>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-6 flex gap-2">
+                <Button variant="outline">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Manage Integrations
+                </Button>
+                <Button variant="outline">
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  View Integration Logs
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="progress" className="space-y-6">

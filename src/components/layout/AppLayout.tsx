@@ -18,7 +18,8 @@ import {
   Download,
   Bookmark,
   Users,
-  Award
+  Award,
+  Plug
 } from 'lucide-react';
 import { useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -35,6 +36,7 @@ const navigation = [
   { name: 'Social Learning', href: '/social-learning', icon: Users },
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
   { name: 'Certifications', href: '/certifications', icon: Award },
+  { name: 'Integrations', href: '/integrations', icon: Plug },
 ];
 
 const AppLayout = () => {

@@ -18,6 +18,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import CreateLearningPathDialog from "@/components/learning-paths/CreateLearningPathDialog";
+import { useUserRole } from "@/hooks/useUserRole";
 
 interface LearningPath {
   id: string;
@@ -39,6 +40,7 @@ interface LearningPath {
 
 const LearningPaths = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { isAdmin } = useUserRole();
 
   const { data: learningPaths = [], isLoading, refetch } = useQuery({
     queryKey: ['learning-paths'],
@@ -152,7 +154,7 @@ const LearningPaths = () => {
             className="pl-10"
           />
         </div>
-        <CreateLearningPathDialog onPathCreated={handlePathCreated} />
+        {isAdmin && <CreateLearningPathDialog onPathCreated={handlePathCreated} />}
       </div>
 
       <div className="grid gap-6">

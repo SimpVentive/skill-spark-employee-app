@@ -340,31 +340,43 @@ export type Database = {
       }
       learning_paths: {
         Row: {
+          assessment_enabled: boolean | null
           category: string | null
+          certification_enabled: boolean | null
           created_at: string
           description: string | null
           id: string
           level: string
+          prerequisites: Json | null
+          required_experience_level: string | null
           title: string
           total_duration_hours: number | null
           updated_at: string
         }
         Insert: {
+          assessment_enabled?: boolean | null
           category?: string | null
+          certification_enabled?: boolean | null
           created_at?: string
           description?: string | null
           id?: string
           level: string
+          prerequisites?: Json | null
+          required_experience_level?: string | null
           title: string
           total_duration_hours?: number | null
           updated_at?: string
         }
         Update: {
+          assessment_enabled?: boolean | null
           category?: string | null
+          certification_enabled?: boolean | null
           created_at?: string
           description?: string | null
           id?: string
           level?: string
+          prerequisites?: Json | null
+          required_experience_level?: string | null
           title?: string
           total_duration_hours?: number | null
           updated_at?: string
@@ -1425,6 +1437,27 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1434,9 +1467,20 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1563,6 +1607,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const

@@ -17,6 +17,7 @@ import {
   Trash2,
   Filter
 } from "lucide-react";
+import { toast } from "sonner";
 
 const Bookmarks = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -234,11 +235,11 @@ const Bookmarks = () => {
                     </div>
                     
                     <div className="flex flex-col gap-2">
-                      <Button size="sm">
+                      <Button size="sm" onClick={() => toast.success(`Opening "${bookmark.title}"...`)}>
                         <Play className="h-4 w-4 mr-2" />
                         {bookmark.progress === 100 ? "Review" : "Continue"}
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => toast.success(`Removed "${bookmark.title}" from bookmarks`)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -273,7 +274,7 @@ const Bookmarks = () => {
                       </div>
                     </div>
                     
-                    <Button size="sm">
+                    <Button size="sm" onClick={() => toast.success(`Opening "${bookmark.title}"...`)}>
                       <Play className="h-4 w-4 mr-2" />
                       Open
                     </Button>
@@ -305,7 +306,7 @@ const Bookmarks = () => {
                           <p className="text-sm text-muted-foreground">{bookmark.course}</p>
                         </div>
                       </div>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => toast.success(`Opening "${bookmark.title}"...`)}>
                         Open
                       </Button>
                     </div>
@@ -342,7 +343,7 @@ const Bookmarks = () => {
                         <span className="text-sm text-muted-foreground">
                           Bookmarked: {bookmark.bookmarkedAt}
                         </span>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => toast.info(`Editing note for "${bookmark.title}"`)}>
                           Edit Note
                         </Button>
                       </div>

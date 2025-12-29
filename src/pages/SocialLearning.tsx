@@ -1,4 +1,4 @@
-
+import { useState } from 'react';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,9 +6,63 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Users, MessageCircle, ThumbsUp, Share, Search, TrendingUp, Clock, Eye } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Users, MessageCircle, ThumbsUp, Share, Search, TrendingUp, Clock, Eye, Plus } from "lucide-react";
+import { toast } from "sonner";
 
 const SocialLearning = () => {
+  const [joinedGroups, setJoinedGroups] = useState<number[]>([]);
+  const [createGroupOpen, setCreateGroupOpen] = useState(false);
+  const [newGroupName, setNewGroupName] = useState('');
+  const [newGroupDescription, setNewGroupDescription] = useState('');
+
+  const handleShare = async (title: string) => {
+    const shareUrl = window.location.href;
+    const shareText = `Check out this discussion: ${title}`;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: title,
+          text: shareText,
+          url: shareUrl,
+        });
+        toast.success("Shared successfully!");
+      } catch (error) {
+        if ((error as Error).name !== 'AbortError') {
+          await navigator.clipboard.writeText(`${shareText} - ${shareUrl}`);
+          toast.success("Link copied to clipboard!");
+        }
+      }
+    } else {
+      await navigator.clipboard.writeText(`${shareText} - ${shareUrl}`);
+      toast.success("Link copied to clipboard!");
+    }
+  };
+
+  const handleJoinGroup = (groupId: number, groupName: string) => {
+    if (joinedGroups.includes(groupId)) {
+      setJoinedGroups(prev => prev.filter(id => id !== groupId));
+      toast.info(`Left ${groupName}`);
+    } else {
+      setJoinedGroups(prev => [...prev, groupId]);
+      toast.success(`Joined ${groupName}!`);
+    }
+  };
+
+  const handleCreateGroup = () => {
+    if (!newGroupName.trim()) {
+      toast.error("Please enter a group name");
+      return;
+    }
+    toast.success(`Group "${newGroupName}" created successfully!`);
+    setCreateGroupOpen(false);
+    setNewGroupName('');
+    setNewGroupDescription('');
+  };
+
   const discussions = [
     {
       id: 1,
@@ -170,7 +224,7 @@ const SocialLearning = () => {
                         <span>{discussion.views} views</span>
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => handleShare(discussion.title)}>
                       <Share className="h-4 w-4 mr-1" />
                       Share
                     </Button>
@@ -187,7 +241,10 @@ const SocialLearning = () => {
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input placeholder="Search study groups..." className="pl-10" />
             </div>
-            <Button>Create Group</Button>
+            <Button onClick={() => setCreateGroupOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Group
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -215,7 +272,13 @@ const SocialLearning = () => {
                   <div className="text-sm">
                     <span className="font-medium">Next session:</span> {group.nextSession}
                   </div>
-                  <Button className="w-full">Join Group</Button>
+                  <Button 
+                    className="w-full" 
+                    variant={joinedGroups.includes(group.id) ? "outline" : "default"}
+                    onClick={() => handleJoinGroup(group.id, group.name)}
+                  >
+                    {joinedGroups.includes(group.id) ? "Leave Group" : "Join Group"}
+                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -261,6 +324,43 @@ const SocialLearning = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={createGroupOpen} onOpenChange={setCreateGroupOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Study Group</DialogTitle>
+            <DialogDescription>
+              Start a new study group to learn together with others.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="group-name">Group Name</Label>
+              <Input
+                id="group-name"
+                placeholder="e.g., React Advanced Patterns"
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="group-description">Description</Label>
+              <Textarea
+                id="group-description"
+                placeholder="What will your group focus on?"
+                value={newGroupDescription}
+                onChange={(e) => setNewGroupDescription(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateGroupOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleCreateGroup}>Create Group</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       </div>
     </ProtectedRoute>
   );

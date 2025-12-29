@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
@@ -6,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
 import { TrendingUp, Clock, BookOpen, Target, Award, Calendar, Users, Activity, Play, Trophy, Zap, Settings, ExternalLink, CheckCircle, Users2 } from "lucide-react";
+import { toast } from "sonner";
 
 const Analytics = () => {
   const weeklyData = [
@@ -218,9 +218,9 @@ const Analytics = () => {
               <div className="space-y-4">
                 <div className="text-sm font-medium text-muted-foreground">E-Learning Courses</div>
                 {continueLearning.filter(item => item.type === "E-Learning Course").map((course, index) => (
-                  <div key={index} className="space-y-2">
+                  <div key={index} className="space-y-2 p-3 rounded-lg border hover:bg-muted/50 transition-colors">
                     <div className="flex items-center justify-between">
-                      <div>
+                      <div className="flex-1">
                         <div className="font-medium">{course.title}</div>
                         <div className="text-sm text-muted-foreground flex items-center gap-2">
                           <Badge variant="outline" className="text-xs">{course.category}</Badge>
@@ -228,8 +228,14 @@ const Analytics = () => {
                           <span>{course.timeAgo}</span>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-sm font-medium">{course.progress}% complete</div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <div className="text-sm font-medium">{course.progress}% complete</div>
+                        </div>
+                        <Button size="sm" onClick={() => toast.success(`Resuming "${course.title}"...`)}>
+                          <Play className="w-3 h-3 mr-1" />
+                          Continue
+                        </Button>
                       </div>
                     </div>
                     <Progress value={course.progress} className="h-2" />
@@ -240,9 +246,9 @@ const Analytics = () => {
               <div className="space-y-4 mt-6">
                 <div className="text-sm font-medium text-muted-foreground">Training Programs</div>
                 {continueLearning.filter(item => item.type === "Training Program").map((program, index) => (
-                  <div key={index} className="space-y-2">
+                  <div key={index} className="space-y-2 p-3 rounded-lg border hover:bg-muted/50 transition-colors">
                     <div className="flex items-center justify-between">
-                      <div>
+                      <div className="flex-1">
                         <div className="font-medium">{program.title}</div>
                         <div className="text-sm text-muted-foreground flex items-center gap-2">
                           <Badge variant="outline" className="text-xs">{program.category}</Badge>
@@ -250,8 +256,14 @@ const Analytics = () => {
                           <span>{program.timeAgo}</span>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-sm font-medium">{program.progress}% complete</div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <div className="text-sm font-medium">{program.progress}% complete</div>
+                        </div>
+                        <Button size="sm" onClick={() => toast.success(`Resuming "${program.title}"...`)}>
+                          <Play className="w-3 h-3 mr-1" />
+                          Continue
+                        </Button>
                       </div>
                     </div>
                     <Progress value={program.progress} className="h-2" />

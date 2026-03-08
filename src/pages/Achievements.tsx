@@ -1,6 +1,8 @@
 
 import AchievementsList from '@/components/achievements/AchievementsList';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import FeatureIntro from '@/components/shared/FeatureIntro';
+import { Trophy } from 'lucide-react';
 
 const Achievements = () => {
   return (

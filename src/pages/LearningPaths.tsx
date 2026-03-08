@@ -120,22 +120,51 @@ const LearningPaths = () => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Learning Paths</h1>
-          <p className="text-muted-foreground">Loading structured learning journeys...</p>
-        </div>
+        <FeatureIntro
+          icon={Route}
+          title="Learning Paths"
+          subtitle="Structured Learning Journeys"
+          description="A Learning Path is a curated sequence of courses and modules designed to build your skills step by step."
+          benefits={[
+            "Follow a clear, structured progression from basics to advanced",
+            "Each module builds on the previous one — no gaps in knowledge",
+          ]}
+          color="bg-green-500/10 text-green-600"
+        />
         <div className="grid gap-6">
           {[1, 2, 3].map((i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader>
-                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-6 bg-muted rounded w-3/4"></div>
+                <div className="h-4 bg-muted rounded w-1/2"></div>
               </CardHeader>
               <CardContent>
-                <div className="h-20 bg-gray-200 rounded"></div>
+                <div className="h-20 bg-muted rounded"></div>
               </CardContent>
             </Card>
           ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="space-y-6">
+        <FeatureIntro
+          icon={Route}
+          title="Learning Paths"
+          subtitle="Structured Learning Journeys"
+          description="A Learning Path is a curated sequence of courses and modules designed to build your skills step by step."
+          benefits={[
+            "Follow a clear, structured progression from basics to advanced",
+            "Each module builds on the previous one — no gaps in knowledge",
+          ]}
+          color="bg-green-500/10 text-green-600"
+        />
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">Unable to load learning paths. Please try again.</p>
+          <Button onClick={() => refetch()} className="mt-4">Retry</Button>
         </div>
       </div>
     );

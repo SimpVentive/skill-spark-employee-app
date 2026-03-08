@@ -13,8 +13,10 @@ import {
   Clock, 
   Award,
   CheckCircle,
-  Circle
+  Circle,
+  Route
 } from "lucide-react";
+import FeatureIntro from "@/components/shared/FeatureIntro";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import CreateLearningPathDialog from "@/components/learning-paths/CreateLearningPathDialog";
@@ -139,10 +141,24 @@ const LearningPaths = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Learning Paths</h1>
-        <p className="text-muted-foreground">Structured learning journeys to master key skills</p>
-      </div>
+      <FeatureIntro
+        icon={Route}
+        title="Learning Paths"
+        subtitle="Structured Learning Journeys"
+        description="A Learning Path is a curated sequence of courses and modules designed to build your skills step by step. Think of it as a guided roadmap — instead of picking random courses, you follow a structured journey from beginner to expert in a specific skill area."
+        benefits={[
+          "Follow a clear, structured progression from basics to advanced",
+          "Each module builds on the previous one — no gaps in knowledge",
+          "Track your progress visually through each path",
+          "Earn certificates upon completing full paths",
+        ]}
+        tips={[
+          "Complete modules in order — they build on each other",
+          "Don't skip ahead, each step prepares you for the next",
+          "Check your progress percentage to stay motivated",
+        ]}
+        color="bg-green-500/10 text-green-600"
+      />
 
       <div className="flex gap-4">
         <div className="relative flex-1">

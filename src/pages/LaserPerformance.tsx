@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import FeatureIntro from '@/components/shared/FeatureIntro';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Activity,
@@ -26,12 +27,28 @@ const LaserPerformance = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">LASER Performance</h1>
-        <p className="text-muted-foreground mt-1">
-          Your personalized performance-enabled learning environment
-        </p>
-      </div>
+      <FeatureIntro
+        icon={Activity}
+        title="LASER Performance"
+        subtitle="Learning & Application Specific to Employee Role"
+        description="LASER is your personalised performance-learning system. It monitors your work KPIs (like output, rejection rate, downtime), detects when something is off, identifies the root cause, and assigns you targeted micro-learning to fix it. It's not a generic training catalog — it's learning that's directly tied to YOUR job performance."
+        benefits={[
+          "Real-time KPI monitoring linked to your daily work metrics",
+          "Automatic root cause analysis when performance dips",
+          "Short 3–5 minute micro-learning modules — not hour-long courses",
+          "Workplace action tasks with checklists to apply what you learned",
+          "Personal learning diary that tracks your improvement journey",
+          "Skills map showing your growing capabilities over time",
+        ]}
+        tips={[
+          "Check Alerts at the start of each shift — takes under a minute",
+          "Complete micro-learning during natural work breaks (3–5 min each)",
+          "Use Action Task checklists on your phone right on the shop floor",
+          "Add personal reflections to your Learning Diary — it helps retention",
+        ]}
+        color="bg-amber-500/10 text-amber-600"
+        defaultExpanded
+      />
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex flex-wrap h-auto gap-1">

@@ -4,8 +4,9 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, Clock, BookOpen, Target, Award, Calendar, Users, Activity, Play, Trophy, Zap, Settings, ExternalLink, CheckCircle, Users2 } from "lucide-react";
+import { TrendingUp, Clock, BookOpen, Target, Award, Calendar, Users, Activity, Play, Trophy, Zap, Settings, ExternalLink, CheckCircle, Users2, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
+import FeatureIntro from "@/components/shared/FeatureIntro";
 
 const Analytics = () => {
   const weeklyData = [
@@ -150,10 +151,24 @@ const Analytics = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold">Learning Dashboard</h1>
-        <p className="text-muted-foreground">Track your progress and continue your learning journey</p>
-      </div>
+      <FeatureIntro
+        icon={BarChart3}
+        title="Analytics"
+        subtitle="Your Learning Metrics"
+        description="Analytics gives you a detailed view of your learning journey — how much time you've spent, how many courses you've completed, your assessment scores, and skill development trends. Use it to understand where you're progressing and where you might need to focus more."
+        benefits={[
+          "Track total time spent on learning per week and month",
+          "Monitor course completion rates and streaks",
+          "View assessment score trends and improvement",
+          "See skill category breakdown and focus areas",
+        ]}
+        tips={[
+          "Review your analytics weekly to spot learning patterns",
+          "Compare your monthly progress to see growth trends",
+          "Use skill breakdowns to identify gaps in your development",
+        ]}
+        color="bg-indigo-500/10 text-indigo-600"
+      />
 
       {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

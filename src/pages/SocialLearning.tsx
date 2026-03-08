@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Users, MessageCircle, ThumbsUp, Share, Search, TrendingUp, Clock, Eye, Plus } from "lucide-react";
 import { toast } from "sonner";
+import FeatureIntro from "@/components/shared/FeatureIntro";
 
 const SocialLearning = () => {
   const [joinedGroups, setJoinedGroups] = useState<number[]>([]);
@@ -155,10 +156,24 @@ const SocialLearning = () => {
   return (
     <ProtectedRoute>
       <div className="space-y-6 p-4 sm:p-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold">Social Learning</h1>
-        <p className="text-muted-foreground">Connect, collaborate, and learn together</p>
-      </div>
+      <FeatureIntro
+        icon={Users}
+        title="Social Learning"
+        subtitle="Learn Together"
+        description="Learning is better together. Social Learning lets you join discussions with colleagues, participate in study groups, share useful resources, and ask questions. Research shows that teaching and discussing with others reinforces your own understanding significantly."
+        benefits={[
+          "Join topic-based discussions with peers across the organisation",
+          "Form or join study groups for collaborative learning",
+          "Share useful resources and tips with colleagues",
+          "Ask questions and get answers from experienced peers",
+        ]}
+        tips={[
+          "Answering others' questions reinforces your own knowledge",
+          "Join at least one study group related to your current learning path",
+          "Share practical tips from your on-the-job experience",
+        ]}
+        color="bg-pink-500/10 text-pink-600"
+      />
 
       <Tabs defaultValue="discussions" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">

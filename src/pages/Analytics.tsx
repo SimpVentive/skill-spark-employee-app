@@ -4,8 +4,9 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, Clock, BookOpen, Target, Award, Calendar, Users, Activity, Play, Trophy, Zap, Settings, ExternalLink, CheckCircle, Users2 } from "lucide-react";
+import { TrendingUp, Clock, BookOpen, Target, Award, Calendar, Users, Activity, Play, Trophy, Zap, Settings, ExternalLink, CheckCircle, Users2, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
+import FeatureIntro from "@/components/shared/FeatureIntro";
 
 const Analytics = () => {
   const weeklyData = [

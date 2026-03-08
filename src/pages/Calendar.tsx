@@ -1,6 +1,8 @@
 
 import ProgramCalendar from '@/components/calendar/ProgramCalendar';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import FeatureIntro from '@/components/shared/FeatureIntro';
+import { Calendar as CalendarIcon } from 'lucide-react';
 
 const Calendar = () => {
   return (

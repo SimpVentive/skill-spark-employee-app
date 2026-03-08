@@ -111,10 +111,23 @@ const Bookmarks = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Bookmarks</h1>
-        <p className="text-muted-foreground">Access your saved learning materials and resources</p>
-      </div>
+      <FeatureIntro
+        icon={Bookmark}
+        title="Bookmarks"
+        subtitle="Your Saved Content"
+        description="Bookmarks let you save courses, videos, documents, and resources for quick access later. Think of it as your personal learning library — save anything interesting and come back to it when you're ready."
+        benefits={[
+          "Save any course, video, or resource with one click",
+          "Organise bookmarks by category for easy retrieval",
+          "Resume bookmarked courses right where you left off",
+          "Add personal notes to bookmarked items",
+        ]}
+        tips={[
+          "Bookmark content during browsing, review later when you have time",
+          "Use the notes feature to jot down why you saved something",
+        ]}
+        color="bg-orange-500/10 text-orange-600"
+      />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

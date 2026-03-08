@@ -20,6 +20,7 @@ import LaserLearningDiary from '@/components/laser/LaserLearningDiary';
 import LaserSkillsMap from '@/components/laser/LaserSkillsMap';
 import LaserSmartRecommendations from '@/components/laser/LaserSmartRecommendations';
 import LaserManagerFeedback from '@/components/laser/LaserManagerFeedback';
+import LaserUserGuide from '@/components/laser/LaserUserGuide';
 
 const LaserPerformance = () => {
   const [activeTab, setActiveTab] = useState('dashboard');

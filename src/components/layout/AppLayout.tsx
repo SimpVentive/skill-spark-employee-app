@@ -20,7 +20,8 @@ import {
   Users,
   Award,
   Plug,
-  Zap
+  Zap,
+  HelpCircle
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import {

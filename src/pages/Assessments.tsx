@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { FileText, Clock, Trophy, TrendingUp, PlayCircle } from "lucide-react";
+import FeatureIntro from "@/components/shared/FeatureIntro";
 import { supabase } from "@/integrations/supabase/client";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 

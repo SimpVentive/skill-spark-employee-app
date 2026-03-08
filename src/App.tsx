@@ -23,6 +23,7 @@ import OfflineContent from '@/pages/OfflineContent';
 import Bookmarks from '@/pages/Bookmarks';
 import SocialLearning from '@/pages/SocialLearning';
 import Certifications from '@/pages/Certifications';
+import LaserPerformance from '@/pages/LaserPerformance';
 
 const queryClient = new QueryClient();
 

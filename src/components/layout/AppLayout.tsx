@@ -19,7 +19,8 @@ import {
   Bookmark,
   Users,
   Award,
-  Plug
+  Plug,
+  Zap
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import {

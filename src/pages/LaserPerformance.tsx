@@ -60,6 +60,9 @@ const LaserPerformance = () => {
           <TabsTrigger value="feedback" className="gap-1.5">
             <MessageSquare className="h-4 w-4" /> Feedback
           </TabsTrigger>
+          <TabsTrigger value="guide" className="gap-1.5">
+            <HelpCircle className="h-4 w-4" /> User Guide
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard" className="mt-6">

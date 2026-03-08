@@ -10,6 +10,7 @@ import {
   Radar,
   Sparkles,
   MessageSquare,
+  HelpCircle,
 } from 'lucide-react';
 import LaserKPIDashboard from '@/components/laser/LaserKPIDashboard';
 import LaserPerformanceAlerts from '@/components/laser/LaserPerformanceAlerts';

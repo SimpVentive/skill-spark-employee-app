@@ -10,7 +10,6 @@ import {
   Radar,
   Sparkles,
   MessageSquare,
-  HelpCircle,
 } from 'lucide-react';
 import LaserKPIDashboard from '@/components/laser/LaserKPIDashboard';
 import LaserPerformanceAlerts from '@/components/laser/LaserPerformanceAlerts';
@@ -20,7 +19,7 @@ import LaserLearningDiary from '@/components/laser/LaserLearningDiary';
 import LaserSkillsMap from '@/components/laser/LaserSkillsMap';
 import LaserSmartRecommendations from '@/components/laser/LaserSmartRecommendations';
 import LaserManagerFeedback from '@/components/laser/LaserManagerFeedback';
-import LaserUserGuide from '@/components/laser/LaserUserGuide';
+
 
 const LaserPerformance = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -59,9 +58,6 @@ const LaserPerformance = () => {
           </TabsTrigger>
           <TabsTrigger value="feedback" className="gap-1.5">
             <MessageSquare className="h-4 w-4" /> Feedback
-          </TabsTrigger>
-          <TabsTrigger value="guide" className="gap-1.5">
-            <HelpCircle className="h-4 w-4" /> User Guide
           </TabsTrigger>
         </TabsList>
 
@@ -195,9 +191,6 @@ const LaserPerformance = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="guide" className="mt-6">
-          <LaserUserGuide />
-        </TabsContent>
       </Tabs>
     </div>
   );

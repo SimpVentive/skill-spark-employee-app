@@ -20,7 +20,8 @@ import {
   Users,
   Award,
   Plug,
-  Zap
+  Zap,
+  HelpCircle
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -51,6 +52,7 @@ const navigation = [
   { name: 'Analytics', href: '/analytics', icon: BarChart3 },
   { name: 'Certifications', href: '/certifications', icon: Award },
   { name: 'Integrations', href: '/integrations', icon: Plug },
+  { name: 'User Guide', href: '/user-guide', icon: HelpCircle },
 ];
 
 function AppSidebar() {

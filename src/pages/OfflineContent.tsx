@@ -19,6 +19,7 @@ import {
   CheckCircle,
   Trash2
 } from "lucide-react";
+import FeatureIntro from "@/components/shared/FeatureIntro";
 
 const OfflineContent = () => {
   const [searchTerm, setSearchTerm] = useState("");

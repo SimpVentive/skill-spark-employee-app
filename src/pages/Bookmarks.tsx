@@ -18,6 +18,7 @@ import {
   Filter
 } from "lucide-react";
 import { toast } from "sonner";
+import FeatureIntro from "@/components/shared/FeatureIntro";
 
 const Bookmarks = () => {
   const [searchTerm, setSearchTerm] = useState("");

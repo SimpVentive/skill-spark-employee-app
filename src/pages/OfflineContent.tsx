@@ -119,10 +119,23 @@ const OfflineContent = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Offline Content</h1>
-        <p className="text-muted-foreground">Download and access training materials offline</p>
-      </div>
+      <FeatureIntro
+        icon={Download}
+        title="Offline Content"
+        subtitle="Learn Anywhere"
+        description="Download training materials to your device so you can learn even without an internet connection. Perfect for the shop floor, travel, or areas with poor WiFi. PDFs, videos, and documents are all available."
+        benefits={[
+          "Access training materials without internet",
+          "Download videos, PDFs, and course documents",
+          "Perfect for shop floor or field work",
+          "Content stays available until you delete it",
+        ]}
+        tips={[
+          "Download materials before going to areas without WiFi",
+          "Check storage usage to manage your device space",
+        ]}
+        color="bg-teal-500/10 text-teal-600"
+      />
 
       {/* Storage Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

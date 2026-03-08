@@ -147,10 +147,24 @@ const Certifications = () => {
   return (
     <ProtectedRoute>
       <div className="space-y-6 p-4 sm:p-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold">Certifications</h1>
-        <p className="text-muted-foreground">Earn industry-recognized certifications to advance your career</p>
-      </div>
+      <FeatureIntro
+        icon={Award}
+        title="Certifications"
+        subtitle="Professional Credentials"
+        description="Certifications are industry-recognised credentials that prove your expertise. Unlike regular course completions, certifications carry formal recognition from issuing bodies. Track prerequisites, manage expiry dates, and start your certification journey here."
+        benefits={[
+          "Earn formally recognised professional certifications",
+          "Track expiry dates so you never miss a renewal",
+          "See prerequisites and eligibility requirements upfront",
+          "Download and share your earned certificates",
+        ]}
+        tips={[
+          "Check prerequisites before starting a certification path",
+          "Set calendar reminders for certifications nearing expiry",
+          "Some certifications require completing specific learning paths first",
+        ]}
+        color="bg-emerald-500/10 text-emerald-600"
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="border-corporate-blue bg-corporate-blue">

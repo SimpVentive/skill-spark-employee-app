@@ -107,12 +107,23 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6 p-4 sm:p-6">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
-          Welcome back! Here's your comprehensive learning overview.
-        </p>
-      </div>
+      <FeatureIntro
+        icon={Home}
+        title="Dashboard"
+        subtitle="Your Learning Hub"
+        description="This is your central command centre. Get a quick overview of your training hours, upcoming programs, learning progress, and recent activity — all in one place."
+        benefits={[
+          "See total training hours across classroom, virtual, and e-learning",
+          "Track your enrolled programs and upcoming deadlines",
+          "Monitor completion rates and learning streaks",
+          "Quick-access links to resume where you left off",
+        ]}
+        tips={[
+          "Check your dashboard daily to stay on top of deadlines",
+          "Click any stat card to dive deeper into that area",
+        ]}
+        color="bg-blue-500/10 text-blue-600"
+      />
 
       {/* Main Dashboard Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">

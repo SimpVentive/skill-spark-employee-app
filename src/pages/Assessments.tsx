@@ -82,12 +82,24 @@ const Assessments = () => {
   return (
     <ProtectedRoute>
       <div className="space-y-6 p-4 sm:p-6">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Assessments</h1>
-          <p className="text-muted-foreground mt-1">
-            Track your assessment performance and progress
-          </p>
-        </div>
+        <FeatureIntro
+          icon={FileText}
+          title="Assessments"
+          subtitle="Test Your Knowledge"
+          description="Assessments are quizzes and tests tied to your training courses. They measure how well you've understood the material. Your scores are tracked over time so you and your manager can see your improvement."
+          benefits={[
+            "Validate your understanding of training material",
+            "Track scores and improvement trends over time",
+            "Multiple attempts allowed on most assessments",
+            "Timed or untimed options depending on the assessment type",
+          ]}
+          tips={[
+            "Review the course material before starting a timed assessment",
+            "You can retake most assessments to improve your score",
+            "Check your average score trend in Analytics",
+          ]}
+          color="bg-red-500/10 text-red-600"
+        />
 
         {/* Assessment Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

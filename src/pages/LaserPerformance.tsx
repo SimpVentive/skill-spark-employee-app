@@ -194,6 +194,10 @@ const LaserPerformance = () => {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="guide" className="mt-6">
+          <LaserUserGuide />
+        </TabsContent>
       </Tabs>
     </div>
   );

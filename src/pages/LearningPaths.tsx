@@ -44,8 +44,10 @@ const LearningPaths = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { isAdmin } = useUserRole();
 
-  const { data: learningPaths = [], isLoading, refetch } = useQuery({
+  const { data: learningPaths = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['learning-paths'],
+    retry: 1,
+    staleTime: 30000,
     queryFn: async () => {
       console.log('Fetching learning paths...');
       

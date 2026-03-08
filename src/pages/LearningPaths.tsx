@@ -13,8 +13,10 @@ import {
   Clock, 
   Award,
   CheckCircle,
-  Circle
+  Circle,
+  Route
 } from "lucide-react";
+import FeatureIntro from "@/components/shared/FeatureIntro";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import CreateLearningPathDialog from "@/components/learning-paths/CreateLearningPathDialog";

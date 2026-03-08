@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Users, MessageCircle, ThumbsUp, Share, Search, TrendingUp, Clock, Eye, Plus } from "lucide-react";
 import { toast } from "sonner";
+import FeatureIntro from "@/components/shared/FeatureIntro";
 
 const SocialLearning = () => {
   const [joinedGroups, setJoinedGroups] = useState<number[]>([]);

@@ -23,6 +23,7 @@ import OfflineContent from '@/pages/OfflineContent';
 import Bookmarks from '@/pages/Bookmarks';
 import SocialLearning from '@/pages/SocialLearning';
 import Certifications from '@/pages/Certifications';
+import LaserPerformance from '@/pages/LaserPerformance';
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ function App() {
               <Route path="social-learning" element={<SocialLearning />} />
               <Route path="analytics" element={<Analytics />} />
               <Route path="certifications" element={<Certifications />} />
+              <Route path="laser-performance" element={<LaserPerformance />} />
               <Route path="notifications" element={
                 <div className="container mx-auto px-4 py-8">
                   <NotificationSettings />

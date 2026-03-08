@@ -102,6 +102,66 @@ export type Database = {
             referencedRelation: "question_bank"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "assessment_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assessment_results: {
+        Row: {
+          answers: Json | null
+          assessment_id: string
+          attempt_number: number | null
+          completed_at: string | null
+          created_at: string
+          id: string
+          passing_score: number | null
+          score: number | null
+          started_at: string | null
+          status: string | null
+          time_spent_minutes: number | null
+          user_id: string
+        }
+        Insert: {
+          answers?: Json | null
+          assessment_id: string
+          attempt_number?: number | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          passing_score?: number | null
+          score?: number | null
+          started_at?: string | null
+          status?: string | null
+          time_spent_minutes?: number | null
+          user_id: string
+        }
+        Update: {
+          answers?: Json | null
+          assessment_id?: string
+          attempt_number?: number | null
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          passing_score?: number | null
+          score?: number | null
+          started_at?: string | null
+          status?: string | null
+          time_spent_minutes?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessment_results_assessment_id_fkey"
+            columns: ["assessment_id"]
+            isOneToOne: false
+            referencedRelation: "assessments"
+            referencedColumns: ["id"]
+          },
         ]
       }
       assessments: {
@@ -147,6 +207,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      audit_logs: {
+        Row: {
+          action: Database["public"]["Enums"]["audit_action"]
+          action_description: string | null
+          changed_fields: string[] | null
+          created_at: string
+          id: string
+          integrity_hash: string
+          ip_address: unknown
+          metadata: Json | null
+          new_values: Json | null
+          old_values: Json | null
+          record_id: string | null
+          session_id: string | null
+          table_name: string | null
+          user_agent: string | null
+          user_email: string | null
+          user_full_name: string | null
+          user_id: string
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["audit_action"]
+          action_description?: string | null
+          changed_fields?: string[] | null
+          created_at?: string
+          id?: string
+          integrity_hash?: string
+          ip_address?: unknown
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          session_id?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_full_name?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["audit_action"]
+          action_description?: string | null
+          changed_fields?: string[] | null
+          created_at?: string
+          id?: string
+          integrity_hash?: string
+          ip_address?: unknown
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          record_id?: string | null
+          session_id?: string | null
+          table_name?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_full_name?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       badges: {
         Row: {
@@ -447,6 +567,107 @@ export type Database = {
         }
         Relationships: []
       }
+      content_categories: {
+        Row: {
+          color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      content_items: {
+        Row: {
+          category_id: string | null
+          content_type: string
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          file_format: string | null
+          file_path: string | null
+          file_size: number | null
+          file_url: string | null
+          id: string
+          is_active: boolean | null
+          language: string | null
+          page_count: number | null
+          slide_count: number | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          content_type: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          file_format?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          language?: string | null
+          page_count?: number | null
+          slide_count?: number | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          content_type?: string
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          file_format?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          language?: string | null
+          page_count?: number | null
+          slide_count?: number | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "content_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_media: {
         Row: {
           created_at: string | null
@@ -605,6 +826,116 @@ export type Database = {
         }
         Relationships: []
       }
+      departments: {
+        Row: {
+          created_at: string
+          employee_count: number | null
+          id: string
+          is_active: boolean | null
+          location: string | null
+          manager_name: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          manager_name?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          location?: string | null
+          manager_name?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      employee_details: {
+        Row: {
+          aadhar_number: string | null
+          address: string | null
+          blood_group: string | null
+          created_at: string
+          date_of_birth: string | null
+          emergency_contact: string | null
+          emergency_phone: string | null
+          esi_number: string | null
+          experience: string | null
+          id: string
+          marital_status: string | null
+          nationality: string | null
+          pan_number: string | null
+          pf_number: string | null
+          profile_id: string
+          qualification: string | null
+          salary: string | null
+          shift_timing: string | null
+          skills: string | null
+          updated_at: string
+        }
+        Insert: {
+          aadhar_number?: string | null
+          address?: string | null
+          blood_group?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
+          esi_number?: string | null
+          experience?: string | null
+          id?: string
+          marital_status?: string | null
+          nationality?: string | null
+          pan_number?: string | null
+          pf_number?: string | null
+          profile_id: string
+          qualification?: string | null
+          salary?: string | null
+          shift_timing?: string | null
+          skills?: string | null
+          updated_at?: string
+        }
+        Update: {
+          aadhar_number?: string | null
+          address?: string | null
+          blood_group?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          emergency_contact?: string | null
+          emergency_phone?: string | null
+          esi_number?: string | null
+          experience?: string | null
+          id?: string
+          marital_status?: string | null
+          nationality?: string | null
+          pan_number?: string | null
+          pf_number?: string | null
+          profile_id?: string
+          qualification?: string | null
+          salary?: string | null
+          shift_timing?: string | null
+          skills?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employee_details_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_roles: {
         Row: {
           created_at: string
@@ -687,6 +1018,809 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      laser_action_tasks: {
+        Row: {
+          assigned_by: string | null
+          checklist: Json | null
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          employee_id: string
+          id: string
+          intervention_id: string | null
+          status: string
+          supervisor_notes: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          checklist?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          employee_id: string
+          id?: string
+          intervention_id?: string | null
+          status?: string
+          supervisor_notes?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_by?: string | null
+          checklist?: Json | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          employee_id?: string
+          id?: string
+          intervention_id?: string | null
+          status?: string
+          supervisor_notes?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_action_tasks_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_action_tasks_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_action_tasks_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "laser_assigned_interventions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_assigned_interventions: {
+        Row: {
+          assigned_at: string
+          cause_intervention_id: string | null
+          completed_at: string | null
+          created_at: string
+          deviation_id: string
+          employee_id: string
+          id: string
+          intervention_type: string
+          learning_path_id: string | null
+          micro_intervention_content: string | null
+          micro_intervention_title: string | null
+          program_id: string | null
+          rca_result_id: string
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          assigned_at?: string
+          cause_intervention_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          deviation_id: string
+          employee_id: string
+          id?: string
+          intervention_type: string
+          learning_path_id?: string | null
+          micro_intervention_content?: string | null
+          micro_intervention_title?: string | null
+          program_id?: string | null
+          rca_result_id: string
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          assigned_at?: string
+          cause_intervention_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          deviation_id?: string
+          employee_id?: string
+          id?: string
+          intervention_type?: string
+          learning_path_id?: string | null
+          micro_intervention_content?: string | null
+          micro_intervention_title?: string | null
+          program_id?: string | null
+          rca_result_id?: string
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_assigned_interventions_cause_intervention_id_fkey"
+            columns: ["cause_intervention_id"]
+            isOneToOne: false
+            referencedRelation: "laser_cause_interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_assigned_interventions_deviation_id_fkey"
+            columns: ["deviation_id"]
+            isOneToOne: false
+            referencedRelation: "laser_deviations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_assigned_interventions_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_assigned_interventions_learning_path_id_fkey"
+            columns: ["learning_path_id"]
+            isOneToOne: false
+            referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_assigned_interventions_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_assigned_interventions_rca_result_id_fkey"
+            columns: ["rca_result_id"]
+            isOneToOne: false
+            referencedRelation: "laser_rca_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_cause_definitions: {
+        Row: {
+          cause_category: string
+          cause_name: string
+          created_at: string
+          default_weight: number
+          description: string | null
+          escalation_target: string | null
+          id: string
+          is_active: boolean | null
+          kpi_id: string
+          requires_training: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          cause_category?: string
+          cause_name: string
+          created_at?: string
+          default_weight?: number
+          description?: string | null
+          escalation_target?: string | null
+          id?: string
+          is_active?: boolean | null
+          kpi_id: string
+          requires_training?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          cause_category?: string
+          cause_name?: string
+          created_at?: string
+          default_weight?: number
+          description?: string | null
+          escalation_target?: string | null
+          id?: string
+          is_active?: boolean | null
+          kpi_id?: string
+          requires_training?: boolean | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_cause_definitions_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_cause_interventions: {
+        Row: {
+          cause_id: string
+          created_at: string
+          id: string
+          intervention_type: string
+          is_active: boolean | null
+          learning_path_id: string | null
+          micro_intervention_content: string | null
+          micro_intervention_title: string | null
+          micro_intervention_type: string | null
+          priority: number | null
+          program_id: string | null
+        }
+        Insert: {
+          cause_id: string
+          created_at?: string
+          id?: string
+          intervention_type?: string
+          is_active?: boolean | null
+          learning_path_id?: string | null
+          micro_intervention_content?: string | null
+          micro_intervention_title?: string | null
+          micro_intervention_type?: string | null
+          priority?: number | null
+          program_id?: string | null
+        }
+        Update: {
+          cause_id?: string
+          created_at?: string
+          id?: string
+          intervention_type?: string
+          is_active?: boolean | null
+          learning_path_id?: string | null
+          micro_intervention_content?: string | null
+          micro_intervention_title?: string | null
+          micro_intervention_type?: string | null
+          priority?: number | null
+          program_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_cause_interventions_cause_id_fkey"
+            columns: ["cause_id"]
+            isOneToOne: false
+            referencedRelation: "laser_cause_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_cause_interventions_learning_path_id_fkey"
+            columns: ["learning_path_id"]
+            isOneToOne: false
+            referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_cause_interventions_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_data_sources: {
+        Row: {
+          api_endpoint: string | null
+          api_key_encrypted: string | null
+          config_data: Json | null
+          created_at: string
+          created_by: string | null
+          id: string
+          last_sync_at: string | null
+          name: string
+          source_type: string
+          status: string | null
+          sync_frequency: string | null
+          updated_at: string
+        }
+        Insert: {
+          api_endpoint?: string | null
+          api_key_encrypted?: string | null
+          config_data?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          last_sync_at?: string | null
+          name: string
+          source_type?: string
+          status?: string | null
+          sync_frequency?: string | null
+          updated_at?: string
+        }
+        Update: {
+          api_endpoint?: string | null
+          api_key_encrypted?: string | null
+          config_data?: Json | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          last_sync_at?: string | null
+          name?: string
+          source_type?: string
+          status?: string | null
+          sync_frequency?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      laser_deviations: {
+        Row: {
+          actual_value: number
+          created_at: string
+          detected_at: string
+          deviation_percentage: number
+          employee_id: string
+          id: string
+          kpi_id: string
+          resolved_at: string | null
+          role_kpi_mapping_id: string
+          severity: string
+          status: string
+          target_value: number
+        }
+        Insert: {
+          actual_value: number
+          created_at?: string
+          detected_at?: string
+          deviation_percentage: number
+          employee_id: string
+          id?: string
+          kpi_id: string
+          resolved_at?: string | null
+          role_kpi_mapping_id: string
+          severity?: string
+          status?: string
+          target_value: number
+        }
+        Update: {
+          actual_value?: number
+          created_at?: string
+          detected_at?: string
+          deviation_percentage?: number
+          employee_id?: string
+          id?: string
+          kpi_id?: string
+          resolved_at?: string | null
+          role_kpi_mapping_id?: string
+          severity?: string
+          status?: string
+          target_value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_deviations_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_deviations_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_deviations_role_kpi_mapping_id_fkey"
+            columns: ["role_kpi_mapping_id"]
+            isOneToOne: false
+            referencedRelation: "laser_role_kpi_mappings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_impact_validations: {
+        Row: {
+          created_at: string
+          id: string
+          improvement_percentage: number | null
+          intervention_id: string
+          kpi_id: string
+          measurement_date: string | null
+          notes: string | null
+          post_intervention_value: number | null
+          pre_intervention_value: number
+          updated_at: string
+          validation_status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          improvement_percentage?: number | null
+          intervention_id: string
+          kpi_id: string
+          measurement_date?: string | null
+          notes?: string | null
+          post_intervention_value?: number | null
+          pre_intervention_value: number
+          updated_at?: string
+          validation_status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          improvement_percentage?: number | null
+          intervention_id?: string
+          kpi_id?: string
+          measurement_date?: string | null
+          notes?: string | null
+          post_intervention_value?: number | null
+          pre_intervention_value?: number
+          updated_at?: string
+          validation_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_impact_validations_intervention_id_fkey"
+            columns: ["intervention_id"]
+            isOneToOne: false
+            referencedRelation: "laser_assigned_interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_impact_validations_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_kpi_definitions: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          measurement_frequency: string
+          name: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          measurement_frequency?: string
+          name: string
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          measurement_frequency?: string
+          name?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      laser_learning_diary: {
+        Row: {
+          created_at: string
+          description: string | null
+          employee_id: string
+          entry_type: string
+          id: string
+          performance_improvement_note: string | null
+          related_intervention_id: string | null
+          related_kpi_id: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          employee_id: string
+          entry_type?: string
+          id?: string
+          performance_improvement_note?: string | null
+          related_intervention_id?: string | null
+          related_kpi_id?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          employee_id?: string
+          entry_type?: string
+          id?: string
+          performance_improvement_note?: string | null
+          related_intervention_id?: string | null
+          related_kpi_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_learning_diary_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_learning_diary_related_intervention_id_fkey"
+            columns: ["related_intervention_id"]
+            isOneToOne: false
+            referencedRelation: "laser_assigned_interventions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_learning_diary_related_kpi_id_fkey"
+            columns: ["related_kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_manager_feedback: {
+        Row: {
+          created_at: string
+          employee_id: string
+          feedback_type: string
+          id: string
+          is_read: boolean
+          manager_id: string
+          message: string
+          related_intervention_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          feedback_type?: string
+          id?: string
+          is_read?: boolean
+          manager_id: string
+          message: string
+          related_intervention_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          feedback_type?: string
+          id?: string
+          is_read?: boolean
+          manager_id?: string
+          message?: string
+          related_intervention_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_manager_feedback_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_manager_feedback_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_manager_feedback_related_intervention_id_fkey"
+            columns: ["related_intervention_id"]
+            isOneToOne: false
+            referencedRelation: "laser_assigned_interventions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_pattern_repository: {
+        Row: {
+          avg_improvement_percentage: number | null
+          cause_id: string
+          created_at: string
+          failure_count: number | null
+          id: string
+          kpi_id: string
+          last_updated_at: string
+          refined_weight: number | null
+          success_count: number | null
+        }
+        Insert: {
+          avg_improvement_percentage?: number | null
+          cause_id: string
+          created_at?: string
+          failure_count?: number | null
+          id?: string
+          kpi_id: string
+          last_updated_at?: string
+          refined_weight?: number | null
+          success_count?: number | null
+        }
+        Update: {
+          avg_improvement_percentage?: number | null
+          cause_id?: string
+          created_at?: string
+          failure_count?: number | null
+          id?: string
+          kpi_id?: string
+          last_updated_at?: string
+          refined_weight?: number | null
+          success_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_pattern_repository_cause_id_fkey"
+            columns: ["cause_id"]
+            isOneToOne: false
+            referencedRelation: "laser_cause_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_pattern_repository_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_performance_signals: {
+        Row: {
+          batch_id: string | null
+          created_at: string
+          employee_id: string
+          id: string
+          kpi_id: string
+          kpi_value: number
+          measurement_date: string
+          operational_context: Json | null
+          source: string
+        }
+        Insert: {
+          batch_id?: string | null
+          created_at?: string
+          employee_id: string
+          id?: string
+          kpi_id: string
+          kpi_value: number
+          measurement_date?: string
+          operational_context?: Json | null
+          source?: string
+        }
+        Update: {
+          batch_id?: string | null
+          created_at?: string
+          employee_id?: string
+          id?: string
+          kpi_id?: string
+          kpi_value?: number
+          measurement_date?: string
+          operational_context?: Json | null
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_performance_signals_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_performance_signals_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_rca_results: {
+        Row: {
+          analysis_data: Json | null
+          cause_id: string
+          created_at: string
+          deviation_id: string
+          id: string
+          is_primary_cause: boolean | null
+          probability_score: number
+        }
+        Insert: {
+          analysis_data?: Json | null
+          cause_id: string
+          created_at?: string
+          deviation_id: string
+          id?: string
+          is_primary_cause?: boolean | null
+          probability_score?: number
+        }
+        Update: {
+          analysis_data?: Json | null
+          cause_id?: string
+          created_at?: string
+          deviation_id?: string
+          id?: string
+          is_primary_cause?: boolean | null
+          probability_score?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_rca_results_cause_id_fkey"
+            columns: ["cause_id"]
+            isOneToOne: false
+            referencedRelation: "laser_cause_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_rca_results_deviation_id_fkey"
+            columns: ["deviation_id"]
+            isOneToOne: false
+            referencedRelation: "laser_deviations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      laser_role_kpi_mappings: {
+        Row: {
+          comparison_operator: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          job_role_id: string
+          kpi_id: string
+          target_value: number
+          threshold_critical: number
+          threshold_warning: number
+          updated_at: string
+        }
+        Insert: {
+          comparison_operator?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          job_role_id: string
+          kpi_id: string
+          target_value: number
+          threshold_critical: number
+          threshold_warning: number
+          updated_at?: string
+        }
+        Update: {
+          comparison_operator?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          job_role_id?: string
+          kpi_id?: string
+          target_value?: number
+          threshold_critical?: number
+          threshold_warning?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "laser_role_kpi_mappings_job_role_id_fkey"
+            columns: ["job_role_id"]
+            isOneToOne: false
+            referencedRelation: "job_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "laser_role_kpi_mappings_kpi_id_fkey"
+            columns: ["kpi_id"]
+            isOneToOne: false
+            referencedRelation: "laser_kpi_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       learning_path_modules: {
         Row: {
@@ -1008,6 +2142,69 @@ export type Database = {
           title?: string
           updated_at?: string
           url?: string | null
+        }
+        Relationships: []
+      }
+      location_types: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+        }
+        Relationships: []
+      }
+      locations: {
+        Row: {
+          address: string | null
+          created_at: string
+          department_count: number | null
+          employee_count: number | null
+          id: string
+          is_active: boolean | null
+          latitude: number | null
+          longitude: number | null
+          name: string
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          department_count?: number | null
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          department_count?: number | null
+          employee_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          type?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1932,39 +3129,63 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string | null
+          date_of_joining: string | null
           department: string | null
           email: string | null
+          employee_id: string | null
           full_name: string | null
+          gender: string | null
+          grade: string | null
           id: string
+          location: string | null
           manager_id: string | null
+          phone: string | null
           position: string | null
+          rank: string | null
           sso_provider: string | null
           sso_provider_id: string | null
           updated_at: string | null
+          work_type: string | null
         }
         Insert: {
           created_at?: string | null
+          date_of_joining?: string | null
           department?: string | null
           email?: string | null
+          employee_id?: string | null
           full_name?: string | null
+          gender?: string | null
+          grade?: string | null
           id: string
+          location?: string | null
           manager_id?: string | null
+          phone?: string | null
           position?: string | null
+          rank?: string | null
           sso_provider?: string | null
           sso_provider_id?: string | null
           updated_at?: string | null
+          work_type?: string | null
         }
         Update: {
           created_at?: string | null
+          date_of_joining?: string | null
           department?: string | null
           email?: string | null
+          employee_id?: string | null
           full_name?: string | null
+          gender?: string | null
+          grade?: string | null
           id?: string
+          location?: string | null
           manager_id?: string | null
+          phone?: string | null
           position?: string | null
+          rank?: string | null
           sso_provider?: string | null
           sso_provider_id?: string | null
           updated_at?: string | null
+          work_type?: string | null
         }
         Relationships: []
       }
@@ -2156,6 +3377,13 @@ export type Database = {
             referencedRelation: "question_bank"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank_safe"
+            referencedColumns: ["id"]
+          },
         ]
       }
       recommendation_feedback: {
@@ -2192,6 +3420,104 @@ export type Database = {
             columns: ["recommendation_id"]
             isOneToOne: false
             referencedRelation: "path_recommendations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roi_cost_entries: {
+        Row: {
+          actual: number
+          budget: number
+          category: string
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          period: string
+          updated_at: string
+        }
+        Insert: {
+          actual?: number
+          budget?: number
+          category: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          period?: string
+          updated_at?: string
+        }
+        Update: {
+          actual?: number
+          budget?: number
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          period?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      roi_impact_metrics: {
+        Row: {
+          after_value: number
+          before_value: number
+          created_at: string
+          created_by: string | null
+          employee_count: number | null
+          id: string
+          impact_level: string
+          measurement_date: string
+          metric_name: string
+          notes: string | null
+          program_id: string | null
+          report_status: string
+          report_title: string | null
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          after_value?: number
+          before_value?: number
+          created_at?: string
+          created_by?: string | null
+          employee_count?: number | null
+          id?: string
+          impact_level?: string
+          measurement_date?: string
+          metric_name: string
+          notes?: string | null
+          program_id?: string | null
+          report_status?: string
+          report_title?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          after_value?: number
+          before_value?: number
+          created_at?: string
+          created_by?: string | null
+          employee_count?: number | null
+          id?: string
+          impact_level?: string
+          measurement_date?: string
+          metric_name?: string
+          notes?: string | null
+          program_id?: string | null
+          report_status?: string
+          report_title?: string | null
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roi_impact_metrics_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
             referencedColumns: ["id"]
           },
         ]
@@ -2301,18 +3627,179 @@ export type Database = {
         }
         Relationships: []
       }
+      tna_cycles: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          departments: string[] | null
+          end_date: string
+          id: string
+          locations: string[]
+          manager_ratification_required: boolean
+          name: string
+          roles: string[]
+          start_date: string
+          status: string
+          updated_at: string | null
+          workflow_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          departments?: string[] | null
+          end_date: string
+          id?: string
+          locations?: string[]
+          manager_ratification_required?: boolean
+          name: string
+          roles?: string[]
+          start_date: string
+          status?: string
+          updated_at?: string | null
+          workflow_type?: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          departments?: string[] | null
+          end_date?: string
+          id?: string
+          locations?: string[]
+          manager_ratification_required?: boolean
+          name?: string
+          roles?: string[]
+          start_date?: string
+          status?: string
+          updated_at?: string | null
+          workflow_type?: string
+        }
+        Relationships: []
+      }
+      tni_submissions: {
+        Row: {
+          created_at: string | null
+          cycle_id: string
+          employee_comments: string | null
+          employee_id: string
+          id: string
+          manager_approved_at: string | null
+          manager_changes_count: number
+          manager_comments: string | null
+          manager_id: string | null
+          manager_modifications: Json | null
+          status: string
+          submitted_at: string | null
+          training_needs: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          cycle_id: string
+          employee_comments?: string | null
+          employee_id: string
+          id?: string
+          manager_approved_at?: string | null
+          manager_changes_count?: number
+          manager_comments?: string | null
+          manager_id?: string | null
+          manager_modifications?: Json | null
+          status?: string
+          submitted_at?: string | null
+          training_needs?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          cycle_id?: string
+          employee_comments?: string | null
+          employee_id?: string
+          id?: string
+          manager_approved_at?: string | null
+          manager_changes_count?: number
+          manager_comments?: string | null
+          manager_id?: string | null
+          manager_modifications?: Json | null
+          status?: string
+          submitted_at?: string | null
+          training_needs?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tni_submissions_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "tna_cycles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trainers: {
+        Row: {
+          bio: string | null
+          created_at: string
+          email: string | null
+          id: string
+          is_active: boolean | null
+          is_external: boolean | null
+          location: string | null
+          name: string
+          phone: string | null
+          programs_count: number | null
+          rating: number | null
+          specialization: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_external?: boolean | null
+          location?: string | null
+          name: string
+          phone?: string | null
+          programs_count?: number | null
+          rating?: number | null
+          specialization?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_external?: boolean | null
+          location?: string | null
+          name?: string
+          phone?: string | null
+          programs_count?: number | null
+          rating?: number | null
+          specialization?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       training_programs: {
         Row: {
           category: string
           created_at: string
+          departments: string[] | null
           description: string | null
           duration_hours: number | null
           faculty: string | null
           id: string
           is_active: boolean | null
           level: string | null
+          locations: string[] | null
           outline: string | null
           prerequisites: string[] | null
+          roles: string[] | null
           skills_covered: string[] | null
           title: string
           updated_at: string
@@ -2321,14 +3808,17 @@ export type Database = {
         Insert: {
           category: string
           created_at?: string
+          departments?: string[] | null
           description?: string | null
           duration_hours?: number | null
           faculty?: string | null
           id?: string
           is_active?: boolean | null
           level?: string | null
+          locations?: string[] | null
           outline?: string | null
           prerequisites?: string[] | null
+          roles?: string[] | null
           skills_covered?: string[] | null
           title: string
           updated_at?: string
@@ -2337,14 +3827,17 @@ export type Database = {
         Update: {
           category?: string
           created_at?: string
+          departments?: string[] | null
           description?: string | null
           duration_hours?: number | null
           faculty?: string | null
           id?: string
           is_active?: boolean | null
           level?: string | null
+          locations?: string[] | null
           outline?: string | null
           prerequisites?: string[] | null
+          roles?: string[] | null
           skills_covered?: string[] | null
           title?: string
           updated_at?: string
@@ -2839,7 +4332,93 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      question_bank_safe: {
+        Row: {
+          competency_id: string | null
+          created_at: string | null
+          difficulty_level: string | null
+          id: string | null
+          is_active: boolean | null
+          points: number | null
+          program_id: string | null
+          question_text: string | null
+          question_type: string | null
+        }
+        Insert: {
+          competency_id?: string | null
+          created_at?: string | null
+          difficulty_level?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          points?: number | null
+          program_id?: string | null
+          question_text?: string | null
+          question_type?: string | null
+        }
+        Update: {
+          competency_id?: string | null
+          created_at?: string | null
+          difficulty_level?: string | null
+          id?: string | null
+          is_active?: boolean | null
+          points?: number | null
+          program_id?: string | null
+          question_text?: string | null
+          question_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_bank_competency_id_fkey"
+            columns: ["competency_id"]
+            isOneToOne: false
+            referencedRelation: "competencies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_bank_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      question_options_safe: {
+        Row: {
+          id: string | null
+          option_order: number | null
+          option_text: string | null
+          question_id: string | null
+        }
+        Insert: {
+          id?: string | null
+          option_order?: number | null
+          option_text?: string | null
+          question_id?: string | null
+        }
+        Update: {
+          id?: string | null
+          option_order?: number | null
+          option_text?: string | null
+          question_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "question_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "question_bank_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       cleanup_expired_lti_sessions: { Args: never; Returns: number }
@@ -2851,9 +4430,35 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      log_audit_event: {
+        Args: {
+          p_action: Database["public"]["Enums"]["audit_action"]
+          p_action_description?: string
+          p_changed_fields?: string[]
+          p_metadata?: Json
+          p_new_values?: Json
+          p_old_values?: Json
+          p_record_id?: string
+          p_table_name?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      audit_action:
+        | "INSERT"
+        | "UPDATE"
+        | "DELETE"
+        | "SELECT"
+        | "LOGIN"
+        | "LOGOUT"
+        | "LOGIN_FAILED"
+        | "PASSWORD_CHANGE"
+        | "PERMISSION_CHANGE"
+        | "SIGNATURE"
+        | "EXPORT"
+        | "IMPORT"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2982,6 +4587,20 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      audit_action: [
+        "INSERT",
+        "UPDATE",
+        "DELETE",
+        "SELECT",
+        "LOGIN",
+        "LOGOUT",
+        "LOGIN_FAILED",
+        "PASSWORD_CHANGE",
+        "PERMISSION_CHANGE",
+        "SIGNATURE",
+        "EXPORT",
+        "IMPORT",
+      ],
     },
   },
 } as const

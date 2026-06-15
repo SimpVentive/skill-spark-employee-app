@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, Search, RotateCcw, CheckCircle2 } from "lucide-react";
+import { BookOpen, Search, RotateCcw, CheckCircle2, Library as LibraryIcon } from "lucide-react";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import FeatureIntro from "@/components/shared/FeatureIntro";
 import { supabase } from "@/integrations/supabase/client";

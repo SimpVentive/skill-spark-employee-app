@@ -102,8 +102,16 @@ const Library = () => {
         </div>
 
         <FeatureIntro
+          icon={LibraryIcon}
           title="How the Library works"
+          subtitle="Borrow & return"
           description="Find a book, click Check Out to borrow it for 14 days, and click Return when you're done. Your active loans are tracked automatically."
+          benefits={[
+            "Borrow company books in one click",
+            "Automatic 14-day due dates",
+            "See what you currently have on loan",
+            "Return any time with the Return button",
+          ]}
         />
 
         <div className="relative">

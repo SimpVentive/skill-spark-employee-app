@@ -43,6 +43,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home },
   { name: 'LASER Performance', href: '/laser-performance', icon: Zap },
   { name: 'Course Catalog', href: '/course-catalog', icon: Search },
+  { name: 'MOOC Courses', href: '/mooc-courses', icon: Globe },
   { name: 'Learning Paths', href: '/learning-paths', icon: Route },
   { name: 'Assessments', href: '/assessments', icon: FileText },
   { name: 'Calendar', href: '/calendar', icon: Calendar },

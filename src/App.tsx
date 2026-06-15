@@ -52,6 +52,7 @@ function App() {
               <Route path="certifications" element={<Certifications />} />
               <Route path="laser-performance" element={<LaserPerformance />} />
               <Route path="user-guide" element={<UserGuide />} />
+              <Route path="mooc-courses" element={<MooCCourses />} />
               <Route path="notifications" element={
                 <div className="container mx-auto px-4 py-8">
                   <NotificationSettings />

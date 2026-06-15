@@ -21,7 +21,8 @@ import {
   Award,
   Plug,
   Zap,
-  HelpCircle
+  HelpCircle,
+  Globe
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import {

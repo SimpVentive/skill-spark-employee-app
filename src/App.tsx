@@ -25,6 +25,7 @@ import SocialLearning from '@/pages/SocialLearning';
 import Certifications from '@/pages/Certifications';
 import LaserPerformance from '@/pages/LaserPerformance';
 import UserGuide from '@/pages/UserGuide';
+import MooCCourses from '@/pages/MooCCourses';
 
 const queryClient = new QueryClient();
 
